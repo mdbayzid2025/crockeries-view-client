@@ -1,0 +1,53 @@
+/* Google Font Import - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+:root {
+  /* Light Mode Colors */
+  --body-color: #E4E9F7;
+  --sidebar-color: #FFF;
+  --primary-color: #695CFE;
+  --primary-color-light: #F6F5FF;
+  --toggle-color: #DDD;
+  --text-color: #707070;
+
+  /* Dark Mode Colors */
+  --dark-body-color: #18191A;
+  --dark-sidebar-color: #242526;
+  --dark-primary-color: #3A3B3C;
+  --dark-primary-color-light: #3A3B3C;
+  --dark-toggle-color: #FFF;
+  --dark-text-color: #CCC;
+
+  /* Transition */
+  --tran-02: all 0.2s ease;
+  --tran-03: all 0.3s ease;
+  --tran-04: all 0.3s ease;
+  --tran-05: all 0.3s ease;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--body-color);
+  transition: var(--tran-05);
+}
+
+::selection {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+body.dark {
+  --body-color: var(--dark-body-color);
+  --sidebar-color: var(--dark-sidebar-color);
+  --primary-color: var(--dark-primary-color);
+  --primary-color-light: var(--dark-primary-color-light);
+  --toggle-color: var(--dark-toggle-color);
+  --text-color: var(--dark-text-color);
+}

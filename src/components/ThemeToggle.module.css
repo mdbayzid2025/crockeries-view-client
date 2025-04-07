@@ -1,0 +1,69 @@
+.mode {
+    border-radius: 6px;
+    background-color: var(--primary-color-light);
+    position: relative;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    transition: var(--tran-05);
+  }
+  
+  .sunMoon {
+    height: 50px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .icon {
+    font-size: 20px;
+    color: var(--text-color);
+    transition: var(--tran-03);
+  }
+  
+  .modeText {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-color);
+    white-space: nowrap;
+    transition: var(--tran-03);
+  }
+  
+  .toggleSwitch {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .switch {
+    position: relative;
+    height: 22px;
+    width: 40px;
+    border-radius: 25px;
+    background-color: var(--toggle-color);
+    transition: var(--tran-05);
+  }
+  
+  .switch::before {
+    content: '';
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    background-color: var(--sidebar-color);
+    transition: var(--tran-04);
+  }
+  
+  body.dark .switch::before {
+    left: 20px;
+  }

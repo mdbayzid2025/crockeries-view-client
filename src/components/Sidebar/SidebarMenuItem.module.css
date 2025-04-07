@@ -1,0 +1,59 @@
+.navLink {
+  height: 50px;
+  margin-top: 10px;
+}
+
+.link {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: var(--tran-03);
+  padding: 0 10px;
+}
+
+.link:hover {
+  background-color: var(--primary-color);
+}
+
+.link:hover .icon,
+.link:hover .text {
+  color: var(--sidebar-color);
+}
+
+/* Active link styling */
+.link.active {
+  background-color: var(--primary-color);
+}
+
+.link.active .icon,
+.link.active .text {
+  color: var(--sidebar-color);
+}
+
+body.dark .link:hover .icon,
+body.dark .link:hover .text {
+  color: var(--text-color);
+}
+
+.icon {
+  min-width: 60px;
+  border-radius: 6px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--text-color);
+  transition: var(--tran-03);
+}
+
+.text {
+  font-size: 17px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--text-color);
+  transition: var(--tran-03);
+}
