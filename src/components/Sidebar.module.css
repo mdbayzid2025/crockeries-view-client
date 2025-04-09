@@ -9,6 +9,12 @@
     transition: var(--tran-05);
     z-index: 100;
   }
+
+  @media (max-width: 768px){
+    .sidebar{
+      display: none;
+    }
+  }
   
   .close {
     width: 88px;

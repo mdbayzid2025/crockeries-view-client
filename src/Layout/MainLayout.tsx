@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import { Outlet } from 'react-router-dom'
+import styles from './MainLayout.module.css';
+
 
 const MainLayout = () => {
     const [isOpen, setIsOpen] = useState(true);
@@ -23,7 +25,7 @@ const MainLayout = () => {
         darkMode={darkMode}
         toggleMode={toggleMode}
         />
-        <div  style={{ marginLeft: '250px', padding: '20px' }}>
+        <div className={styles.content}  style={{padding: '20px' }}>
             <Outlet />
         </div>
     </div>
