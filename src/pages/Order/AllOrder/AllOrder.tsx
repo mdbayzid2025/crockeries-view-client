@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import styles from './AllOrder.module.css';
-
+import Invoice from '../../../components/Invocie/Invoice';
+import { useReactToPrint } from 'react-to-print';
 
 const products = [
   {
@@ -204,8 +205,16 @@ const products = [
 
 const AllOrder = () => {
 
+const contentRef = useRef<HTMLDivElement>(null);
+
+  const reactToPrintFn = useReactToPrint({ contentRef });
   return (
     <div>AllOrder
+
+<div>
+    <button onClick={() => reactToPrintFn()}>Print</button>
+    {/* <div ref={contentRef}>Content to print</div> */}
+  </div>
 
 <div className={styles.pageTable}>
         <table>
@@ -240,12 +249,20 @@ const AllOrder = () => {
       <td>{data.brand?.name}</td>
       <td>{data.brand?.name}</td>
       <td>{data.brand?.name}</td>
-      <td>{data.brand?.name}</td>
-      
+      <td onClick={()=>reactToPrintFn()}>
+        Print
+        </td>      
             </tr>
         )  } 
         </table>
         </div>
+        {/* {openInvoice &&
+        <div  ref={contentRef}>
+        <Invoice/>
+        </div>} */}
+              
+        <Invoice ref={contentRef}/>    
+         
     </div>
   )
 }
