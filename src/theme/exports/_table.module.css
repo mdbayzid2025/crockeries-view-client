@@ -1,0 +1,82 @@
+/* --- page-table --- */
+.pageTable {
+    margin-top: 12px;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+  
+  table{
+    width: 100%;
+    background: #fff;
+    border-collapse: collapse;
+    
+    th{
+        font-size: 14px;
+    font-weight: 600;
+    padding: 14px 15px;
+    white-space: nowrap;
+    color: #42b00f;
+    letter-spacing: 0.5px;
+    position: relative;
+    }
+    
+    td{
+    padding: 9px 15px 8px;
+    color: #333333;
+    font-weight: 400;
+    font-size: 14px;
+    border-bottom: 1px solid #d0d0d0;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
+    white-space: wrap;
+    }
+  }
+  .tableHeader{
+    border-bottom: 0;
+background-color: #f9f9f9;
+}
+
+ .table-image {
+  width: 43px !important;
+  height: 43px !important;
+  object-fit: cover !important;
+  border-radius: 5px !important;
+}
+page-table {
+  .image {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    img {
+      width: 26px;
+      height: 26px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+    }
+
+    span {
+      padding-top: 3px;
+    }
+  }
+}
+
+.tableImage{
+  width: 43px !important;
+  height: 43px !important;
+  object-fit: cover !important;
+  border-radius: 5px !important;
+}
+
+.checkBox{
+  border-radius: 0.125rem; 
+border-color: #D1D5DB; 
+height: 1.2rem; 
+width: 1.2rem; 
+color: #2563EB; 
+background-color: #F3F4F6; 
+
+}

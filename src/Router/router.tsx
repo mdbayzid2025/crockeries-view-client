@@ -6,6 +6,8 @@ import Signup from "../pages/Auth/Signup";
 import AllProducts from "../pages/AllProducts/AllProducts";
 import Order from "../pages/Order/Order";
 
+import Customers from "../pages/Customer/Customers";
+
 
 
 const router = createBrowserRouter([
@@ -24,6 +26,10 @@ const router = createBrowserRouter([
             {
                 path: "/order",
                 element: <Order />
+            },          
+            {
+                path: "/customers",
+                element: <Customers />
             },          
             {
                 path: "/login",
