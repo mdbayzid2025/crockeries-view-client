@@ -1,16 +1,19 @@
 import { useState, useRef } from 'react';
 import styles from './AddProduct.module.css';
+import ImageUploadSpinner from '../Common/ImageUploadSpinner/ImageUploadSpinner';
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
+    code: '',
     category: '',
+    brand: '',
     price: '',
     discount: '',
     description: '',
     image: null
   });
-
+const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -37,11 +40,27 @@ const AddProduct = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e:any) => {
+  const handleImageChange = async(e:any) => {
+    setLoading(!loading);
     const file = e.target.files[0];
+    if(!file) return;      
     if (file) {
-      setFormData(prev => ({ ...prev, image: file }));
-      setImagePreview(URL.createObjectURL(file));
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "crockeries-view");
+      data.append("cloud_name", "dxspmmowc");
+
+      const response = await fetch("https://api.cloudinary.com/v1_1/dxspmmowc/image/upload", {
+        method: "POST",
+        body: data,
+
+      })
+
+      const uploadedImageUrl = await response.json();
+      
+      setImagePreview(uploadedImageUrl?.url)
+      setLoading(false);
+      setFormData(prev => ({ ...prev, profile: uploadedImageUrl?.url }));        
     }
   };
 
@@ -69,20 +88,39 @@ const AddProduct = () => {
         <h2 className={styles.formTitle}>Add New Product</h2>
         
         <form onSubmit={handleSubmit}>
-          {/* Title */}
-          <div className={styles.formGroup}>
+
+        <div className={styles.doubleInput}>
+  {/* Title */}
+  <div className={styles.formGroup}>
             <label htmlFor="title" className={styles.label}>Product Title*</label>
             <input
               type="text"
               id="title"
-              name="title"
-              value={formData.title}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               placeholder="e.g., Floral Porcelain Tea Cup Set"
               className={styles.input}
               required
             />
           </div>
+
+ {/* Title */}
+ <div className={styles.formGroup}>
+            <label htmlFor="code" className={styles.label}>Item Code*</label>
+            <input
+              type="text"
+              id="code"
+              name="code"
+              value={formData.code}
+              onChange={handleChange}
+              placeholder="Item Code"
+              className={styles.input}
+              required
+            />
+          </div>
+        </div>
+        
 
           <div className={styles.doubleInput}>
  {/* Category */}
@@ -167,7 +205,11 @@ const AddProduct = () => {
           {/* Image Upload */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Product Image</label>
+            
+            
             <div className={styles.imageUploadContainer}>
+            {loading ? <ImageUploadSpinner /> : 
+            <>
               {imagePreview ? (
                 <div className={styles.imagePreviewWrapper}>
                   <img 
@@ -197,6 +239,10 @@ const AddProduct = () => {
                   </div>
                 </div>
               )}
+              </>
+            
+          }
+              
               <input
                 type="file"
                 ref={fileInputRef}
@@ -205,6 +251,7 @@ const AddProduct = () => {
                 className={styles.fileInput}
               />
             </div>
+            
           </div>
                       
           {/* Description */}
