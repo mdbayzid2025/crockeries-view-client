@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import styles from './AllProducts.module.css'
 import AllProductsHeader from './AllProductsHeader'
 import AddProduct from '../../components/AddProduct/AddProduct'
+import { CiSearch } from 'react-icons/ci'
 
 const products = [
     {
@@ -209,7 +210,18 @@ const AllProducts = () => {
   return (
     <div>
         <AllProductsHeader selected={selected} setSelectTab={setSelectTab} />
-        
+       {selected === 'All Products' && <div className={styles.container}>
+      <div className={styles.searchBar}>
+      <CiSearch size={25}/>
+        <input
+          type="text"
+          placeholder="Search product"
+          className={styles.input}
+        />
+      </div>
+    </div>}
+
+
          {selected === 'All Products' && 
         <div className={styles.pageTable}>
         <table>

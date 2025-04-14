@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../../theme/exports/_table.module.css' 
+import selfStyle from './AllCustomer.module.css';
 import img from '../../assets/profile.jpg'
+import { CiSearch } from 'react-icons/ci'
 const products = [
   {
       "_id": "67e18a16ee1a89daa46a8e99",
@@ -217,6 +219,17 @@ const AllCustomer = () => {
     <div>
       <h1>AllCustomer</h1>
 
+      <div className={selfStyle.container}>
+      <div className={selfStyle.searchBar}>
+      <CiSearch size={25}/>
+        <input
+          type="text"
+          placeholder="Search product"
+          className={selfStyle.input}
+        />
+      </div>
+    </div>
+
       <div className={styles.pageTable}>
       {clients?.length  ? 
         <table>
@@ -224,8 +237,8 @@ const AllCustomer = () => {
           <th className={styles.tableCheckbox}>
             {/* <mat-checkbox #matCheckbox (change)="onAllSelectChange($event)"></mat-checkbox> */}
           </th>
-          <th>Image</th>
-  <th>Code</th>
+          <th>Photo</th>
+  <th>Party Code</th>
   <th>Name</th>
   <th>Mobile</th>
   <th>Address</th>
@@ -278,7 +291,7 @@ const AllCustomer = () => {
 </td>
 <td>
 
-<img src={data.images[0]} alt="image" className={styles.tableImage} />
+<img src={img} alt="image" className={styles.tableImage} />
 </td>
 <td>{data.subCategory ? data?.subCategory?.name : 'N/A'}</td>
 <td>{data.brand?.name}</td>

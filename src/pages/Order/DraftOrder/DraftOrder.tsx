@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './DraftOrder.module.css'
+import { CiSearch } from 'react-icons/ci'
+import useOrderSummary from '../../../hooks/useOrderSummary'
 
 const products = [
   {
@@ -202,48 +204,120 @@ const products = [
 ]
 
 const DraftOrder = () => {
-  return (
-    <div>DraftOrder
+     const [orders, setOrders] = useState([])
+        const [items, setItems]= useState([])
+    
+        const storedItem = localStorage.getItem('order') ? JSON.parse(localStorage.getItem('order')) : []
+    
+        useEffect(()=>{
+    
+            if(storedItem){
+                setItems(storedItem?.items);
+                setOrders([storedItem])
+            }
+        },[])
 
+        const summary = useOrderSummary(items);
+
+        console.log('sssss', summary);
+
+  return (
+    <div>
+<div className={styles.container}>
+      <div className={styles.searchBar}>
+      <CiSearch size={25}/>
+        <input
+          type="text"
+          placeholder="Search by Order Number.."
+          className={styles.input}
+        />
+      </div>
+    </div>
+
+{orders && orders.map((order, index)=> 
+<div key={index}>
+<div className={styles.orderHeader}>
+<div className={styles.leftContant}>
+    <p className={styles.customer}>{order?.customer_name} <span>({order?.customer_code})</span></p>
+    <p>{order?.mobile}</p>
+    <p>{order?.address}, {order?.district}</p>    
+</div>
+
+<div className={styles.rightContant}>
+<a href="/invoice/1234" className={styles.printButton}>Print</a>
+
+<h3>Order No : 1111  </h3>
+
+
+<div className={styles.statusContainer}>
+<p className={styles.status}>Status: <span>Rough Order</span></p>
+
+<select name="" id="">
+    <option disabled selected value="change">Change</option>
+    <option value="rough">Rough</option> 
+    <option value="ladger">Ladger</option>
+</select>
+
+</div>
+<p>Order Date: 14 Fab 2025</p>
+</div>    
+  </div>
 <div className={styles.pageTable}>
         <table>
         <tr className={styles.tableHeader}>
           <th className={styles.tableCheckbox}>
-            {/* <mat-checkbox #matCheckbox (change)="onAllSelectChange($event)"></mat-checkbox> */}
+            Image
           </th>
-          <th>Image</th>
           <th>Name</th>
+          <th>Code</th>
           <th>Category</th>
-          <th>Sub Category</th>
           <th>Brand</th>
-          
-          
-          <th>Sale Price</th>          
-          <th>Status</th>
-          <th>Actions</th>
+          <th>Unit</th>
+          <th>price</th>                    
+          <th>Discount</th>                    
+          <th>Amuont</th>                    
         </tr>     
         
-        {products && products.map((data:any)=>
-            <tr key={data._id}>            
-      <td>
-        <input id="vue-checkbox-list" className={styles.checkBox} type="checkbox" />
-      </td>
+        {items && items.map((data:any)=>
+            <tr key={data._id}>                  
       <td>
 
-        <img src={data.images[0]} alt="image" className={styles.tableImage} />
-      </td>
-      <td>{data.subCategory ? data?.subCategory?.name : 'N/A'}</td>
-      <td>{data.brand?.name}</td>
-      <td>{data.brand?.name}</td>
-      <td>{data.brand?.name}</td>
-      <td>{data.brand?.name}</td>
-      <td>{data.brand?.name}</td>
-      <td>{data.brand?.name}</td>
-      
-            </tr>
-        )  } 
-        </table>
+        <img src="src\assets\profile.jpg" alt="image" className={styles.tableImage} />
+      </td>      
+      <td>{data?.name}</td>
+      <td>{data?.code}</td>
+      <td>{data?.category}</td>
+      <td>{data?.brand}</td>
+      <td>{data?.unit}</td>
+      <td>{data?.price}</td>
+      <td>{data?.discount}</td>
+      <td>{data?.amount}</td>      
+      </tr>)} 
+      <tr>
+        <td colSpan={9}>
+{/* -------- Sub Total ---------- */}
+
+<div className={styles.wrapper}>
+            <div className={styles.itemRow}>
+                <p className={styles.label}>Subtotal</p>
+                <p className={styles.value}>{summary?.subTotal}</p>
+            </div>            
+            <div className={styles.itemRow}>
+                <p className={styles.label}>Discount</p>
+                <p className={styles.value}>{summary?.totalDiscount}</p>
+            </div>
+            <div className={styles.totalContainer}>
+                <p className={styles.totalLabel}>Net Total</p>
+                <p className={styles.totalValue}>{summary?.netTotal}</p>
+            </div>
         </div>
+        </td>
+      </tr>
+        </table>
+        
+        </div> 
+</div>
+)}
     </div>
   )
 }

@@ -19,10 +19,12 @@ const mockProducts = [
 
 const AddOrder = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    customer_code: '',
+    customer_name: '',
     mobile: '',
-    shippingAddress: '',
-    status: 'Draft',
+    address: '',
+    district: '',
+    status: 'rough',
     items: [],
   });
 
@@ -116,7 +118,9 @@ const AddOrder = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Order submitted:', formData);
+    
     // Add your order submission logic here
+    localStorage.setItem('order', JSON.stringify(formData));
   };
 
   return (
@@ -128,21 +132,37 @@ const AddOrder = () => {
           {/* Customer Information */}
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Customer Information</h3>
-            <div className={styles.inputGroup}>
+            <div className={styles.doubleInput}>
+            <div >
+              <label htmlFor="customer_code">Customer Code*</label>
+              <input
+                type="text"
+                id="customer_code"
+                name="customer_code"
+                value={formData.customer_code}
+                onChange={handleInputChange}
+                placeholder="Enter customer code"
+                className={styles.input}
+                required
+              />
+            </div>
+            <div >
               <label htmlFor="name">Customer Name*</label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="customer_name"
+                name="customer_name"
+                value={formData.customer_name}
                 onChange={handleInputChange}
                 placeholder="Enter customer name"
                 className={styles.input}
                 required
               />
             </div>
-
-            <div className={styles.inputGroup}>
+              </div>
+           
+              <div className={styles.doubleInput}>
+              <div className={styles.inputGroup}>
               <label htmlFor="mobile">Mobile Number*</label>
               <input
                 type="tel"
@@ -154,22 +174,35 @@ const AddOrder = () => {
                 className={styles.input}
                 required
               />
-            </div>
-
+            </div>            
             <div className={styles.inputGroup}>
-              <label htmlFor="shippingAddress">Shipping Address*</label>
-              <textarea
-                id="shippingAddress"
-                name="shippingAddress"
-                value={formData.shippingAddress}
+              <label htmlFor="address">Shipping Address*</label>
+              <input
+                type="tel"
+                id="address"
+                name="address"
+                value={formData.address}
                 onChange={handleInputChange}
-                placeholder="Enter complete shipping address"
-                className={styles.textarea}
-                rows="3"
+                placeholder="Enter Address"
+                className={styles.input}
+                required
+              />
+            </div>                          
+              </div>
+              <div className={styles.doubleInput}>
+              <div className={styles.inputGroup}>
+              <label htmlFor="district">District*</label>
+              <input
+                type="tel"
+                id="district"
+                name="district"
+                value={formData.district}
+                onChange={handleInputChange}
+                placeholder="Enter District"
+                className={styles.input}
                 required
               />
             </div>
-
             <div className={styles.inputGroup}>
               <label htmlFor="status">Order Status*</label>
               <select
@@ -180,10 +213,11 @@ const AddOrder = () => {
                 className={styles.input}
                 required
               >
-                <option value="Draft">Draft</option>
-                <option value="Confirm">Confirm</option>
+                <option value="rough">Rough</option>
+                <option value="ladger">Ladger</option>
               </select>
             </div>
+            </div>            
           </div>
 
           {/* Order Items */}
@@ -235,9 +269,10 @@ const AddOrder = () => {
                 <table className={styles.orderTable}>
                   <thead>
                     <tr>
-                      {!isMobile && <th>Product</th>}
-                      {!isMobile && <th>Price</th>}
-                      {!isMobile && <th>Discount</th>}
+                     <th>Product</th>
+                     <th>Unit</th>
+                     <th>Price</th>
+                     <th>Discount</th>
                       <th>Qty</th>
                       <th>Amount</th>
                       <th>Action</th>
@@ -246,7 +281,7 @@ const AddOrder = () => {
                   <tbody>
                     {formData.items.map((item, index) => (
                       <tr key={index}>
-                        {!isMobile && (
+                        
                           <td className={styles.productCell}>
                             <img 
                               src={item.image} 
@@ -254,10 +289,10 @@ const AddOrder = () => {
                               className={styles.itemImage}
                             />
                             <span>{item.title}</span>
-                          </td>
-                        )}
-                        {!isMobile && <td>₹{item.price}</td>}
-                        {!isMobile && <td>{item.discount}%</td>}
+                          </td>                        
+                       <td>{item.unit}</td>
+                       <td>{item.price}</td>
+                       <td><input className={styles.discountInput} value={item.discount ?? 0} type="text" placeholder='Discount'/></td>
                         <td>
                           <div className={styles.quantityControl}>
                             <button 
@@ -278,7 +313,7 @@ const AddOrder = () => {
                           </div>
                         </td>
                         <td>
-                          ₹{((item.price * item.quantity) * (100 - item.discount) / 100).toFixed(2)}
+                          {((item.price * item.quantity) * (100 - item.discount) / 100).toFixed(2)}
                         </td>
                         <td>
                           <button 
@@ -286,7 +321,8 @@ const AddOrder = () => {
                             onClick={() => removeItem(index)}
                             className={styles.removeBtn}
                           >
-                            {isMobile ? '×' : 'Remove'}
+                            {/* {isMobile ? '×' : 'Remove'} */}
+                            Remove
                           </button>
                         </td>
                       </tr>
@@ -294,7 +330,7 @@ const AddOrder = () => {
                   </tbody>
                 </table>
 
-                {isMobile && formData.items.map((item, index) => (
+                {/* {isMobile && formData.items.map((item, index) => (
                   <div key={`mobile-${index}`} className={styles.mobileItemCard}>
                     <div className={styles.mobileItemHeader}>
                       <img 
@@ -341,7 +377,7 @@ const AddOrder = () => {
                       </button>
                     </div>
                   </div>
-                ))}
+                ))} */}
               </div>
             ) : (
               <div className={styles.emptyCart}>
@@ -356,15 +392,15 @@ const AddOrder = () => {
             <div className={styles.summaryGrid}>
               <div className={styles.summaryRow}>
                 <span>Sub Total:</span>
-                <span>₹{summary.subTotal.toFixed(2)}</span>
+                <span>{summary.subTotal.toFixed(2)}</span>
               </div>
               <div className={styles.summaryRow}>
                 <span>Discount:</span>
-                <span>- ₹{summary.totalDiscount.toFixed(2)}</span>
+                <span>- {summary.totalDiscount.toFixed(2)}</span>
               </div>
               <div className={`${styles.summaryRow} ${styles.totalRow}`}>
                 <span>Net Total:</span>
-                <span>₹{summary.netTotal.toFixed(2)}</span>
+                <span>{summary.netTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

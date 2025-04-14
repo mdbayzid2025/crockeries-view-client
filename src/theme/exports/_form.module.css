@@ -116,7 +116,7 @@
 
    /* Image Upload Styles */
    .profileImageContainer {    
-    max-width: 100px;
+    max-width: 150px;
     margin: 0 auto;
   }
 
@@ -210,4 +210,33 @@
   
   .submitButton:hover {
     background-color: #4f46e5;
+  }
+
+  .profileUploadArea {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;    
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+    width: 150px;
+  }
+
+.profileUploadIcon {
+    width: 48px;
+    height: 48px;
+    fill: #94a3b8;
+    margin-bottom: 0.75rem;
+  }
+
+  @media(max-width: 768px){
+    .formContainer{
+      padding: 2rem 0rem;
+    }
+    .doubleInput{
+      grid-template-columns: 1fr;
+    }
+    .section{
+      padding: 0.5rem;
+    }
   }

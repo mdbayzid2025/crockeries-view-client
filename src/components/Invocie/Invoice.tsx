@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styles from './invoice.module.css';
+import { useReactToPrint } from 'react-to-print';
 
-const Invoice = ({ref}) => {
-//   const handlePrint = () => {
-//     window.print();
-//   };
+const Invoice = () => {
+  const contentRef = useRef<HTMLDivElement>(null);
+const reactToPrintFn = useReactToPrint({ contentRef });
+
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
-    <div className={styles.invoiceContainer}  ref={ref}>
-      {/* <button onClick={handlePrint} className={styles.printButton}>
+    <div className={styles.invoiceContainer} ref={contentRef}>
+      <button onClick={() => reactToPrintFn()} className={styles.printButton}>
         Print Invoice
-      </button> */}
+      </button>
       
-      <div className={styles.py4}>
+      <div className={styles.py4} >
         <div className={`${styles.px14} ${styles.py6}`}>
           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <tbody>

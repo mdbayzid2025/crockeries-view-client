@@ -9,9 +9,7 @@ import styles from './Order.module.css';
 const tabs = [
     'Ladger Order',
     'Rough Order',
-    'Add Order',
-    'Add Order',
-    'Add Order',
+    'Add Order',    
 ]
 
 const Order = () => {

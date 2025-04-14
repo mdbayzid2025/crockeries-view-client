@@ -79,3 +79,82 @@ color: #2563EB;
 background-color: #F3F4F6; 
 
 }
+
+.container{
+  position: sticky;
+  top: 0;
+}
+
+.searchBar {
+  position: relative;
+  width: 100%;
+  margin: 20px 0;  
+  svg{
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%)
+  }
+}
+
+.input {
+  padding: 12px 24px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 30px;
+  outline: none;
+  width: 100%;
+  transition: all 0.3s ease;
+  padding-left: 30px;
+}
+
+.input::placeholder {
+  color: #999;
+  transition: all 0.3s ease;
+  padding-left: 20px;
+}
+
+/* Placeholder animation when not focused */
+@keyframes slidePlaceholder {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.input:not(:focus)::placeholder {
+  animation: slidePlaceholder 2s infinite;
+}
+
+/* Focus styles */
+
+.input:focus { /* Single colon for pseudo-class */
+  padding-left: 50px;
+  border-color: #007bff;
+}
+
+.input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.25);
+  width: 350px;
+}
+
+.input:focus::placeholder {
+  animation: none;
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+
+
+@media(min-width: 768px){
+  .searchBar{
+    width:30%;
+  }
+}
+

@@ -97,11 +97,11 @@ const AddCustomer = () => {
               </div>
             ) : (
               <div 
-                className={styles.uploadArea}
+                className={styles.profileUploadArea}
                 onClick={triggerFileInput}
               >
                 <div className={styles.uploadContent}>
-                  <svg className={styles.uploadIcon} viewBox="0 0 24 24">
+                  <svg className={styles.profileUploadIcon} viewBox="0 0 24 24">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                   </svg>
                   <p className={styles.uploadText}>Click to upload image</p>
@@ -210,8 +210,7 @@ const AddCustomer = () => {
 
           <div className={styles.formGroup}>
             <label htmlFor="trade_license" className={styles.label}>Trade License No*</label>
-            <div className={styles.priceInput}>
-              <span className={styles.currency}>৳</span>
+            <div className={styles.priceInput}>              
               <input
               type="text"
               id="trade_license"

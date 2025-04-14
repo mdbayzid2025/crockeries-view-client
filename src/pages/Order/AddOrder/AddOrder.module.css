@@ -290,3 +290,46 @@
   .submitBtn:hover {
     background-color: #4f46e5;
   }
+
+
+  .searchInput {
+    /* width: 100%; */
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #1e293b;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+  }
+  
+  .searchInput:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+
+  .discountInput{
+    width: 50px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #1e293b;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+  }
+
+
+  @media(max-width: 768px){
+    .orderForm{
+      padding: 2rem .5rem;
+    }
+    .doubleInput{
+      grid-template-columns: 1fr;
+    }
+    .section{
+      padding: 0.5rem;
+    }
+  }

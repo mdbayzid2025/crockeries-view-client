@@ -7,6 +7,7 @@ import AllProducts from "../pages/AllProducts/AllProducts";
 import Order from "../pages/Order/Order";
 
 import Customers from "../pages/Customer/Customers";
+import Invoice from "../components/Invocie/Invoice";
 
 
 
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
             {
                 path: "/login",
                 element: <Login />
+            },          
+            {
+                path: "/invoice/:id",
+                element: <Invoice />
             },          
             {
                 path: "/signup",
