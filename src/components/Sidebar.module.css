@@ -7,17 +7,26 @@
     padding: 10px 14px;
     background: var(--sidebar-color);
     transition: var(--tran-05);
-    z-index: 100;
+    z-index: 100;    
   }
 
   @media (max-width: 768px){
     .sidebar{
-      display: none;
+      /* display: none; */
+      width: 98%;
+    }
+    .hide{
+      left: -100%;
     }
   }
   
   .close {
     width: 88px;
+  }
+
+  
+  .show{
+    left: 0;
   }
   
   .menuBar {

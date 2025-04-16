@@ -1,6 +1,9 @@
+import { RxCross1 } from 'react-icons/rx';
 import styles from './SidebarHeader.module.css';
 
-const SidebarHeader = ({ isOpen, toggleSidebar }) => {
+const SidebarHeader = ({ isOpen, toggleSidebar,   setIsClose, isClose }) => {
+
+
   return (
     <header className={styles.header}>
       <div className={styles.imageText}>
@@ -20,6 +23,7 @@ const SidebarHeader = ({ isOpen, toggleSidebar }) => {
         className={`bx bx-chevron-right ${styles.toggle}`} 
         onClick={toggleSidebar}
       ></i>
+      <RxCross1 onClick={()=>setIsClose(!isClose)} className={styles.crossIcon} size={25} />
     </header>
   );
 };

@@ -2,8 +2,18 @@
     margin-left: 250px;    
 }
 
+.MobileHeader{
+    display: none;    
+}
 @media (max-width: 768px){
     .content{
         margin-left: 0;    
     }
+    .MobileHeader{
+        display: block;
+    }
+}
+
+.sidebarContainer{
+    
 }

@@ -16,9 +16,9 @@ const reactToPrintFn = useReactToPrint({ contentRef });
         Print Invoice
       </button>
       
-      <div className={styles.py4} >
-        <div className={`${styles.px14} ${styles.py6}`}>
-          <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
+      <div className={`${styles.py4} `} >
+        <div className={`${styles.px14} ${styles.py6} `}>
+          <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} `}>
             <tbody>
               <tr>
                 <td className={`${styles.wFull} ${styles.alignTop}`}>
@@ -28,7 +28,7 @@ const reactToPrintFn = useReactToPrint({ contentRef });
                 </td>
 
                 <td className={styles.alignTop}>
-                  <div className={styles.textSm}>
+                  <div className={`${styles.textSm} `}>
                     <table className={`${styles.borderCollapse} ${styles.borderSpacing0}`}>
                       <tbody>
                         <tr>
@@ -83,7 +83,7 @@ const reactToPrintFn = useReactToPrint({ contentRef });
           </table>
         </div>
 
-        <div className={`${styles.px14} ${styles.py10} ${styles.textSm} ${styles.textNeutral700}`}>
+        <div className={`${styles.px14} ${styles.py10} ${styles.textSm} ${styles.textNeutral700} ${styles.tableContainer}`}>
           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <thead>
               <tr>

@@ -29,6 +29,28 @@
   
   .wFull {
     width: 100%;
+    overflow-x:auto;
+  }
+  @media(max-width: 768px){
+    .wFull{
+    padding-inline: 0;
+    }   
+    .px14{
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    } 
+    .printButton{
+      top: 65px !important;
+      left: 18px;
+      right: 60% !important;
+    }
+    .tableContainer{
+      overflow-x: auto;
+    }
+    .tableContainer.px14{
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
   
   .wHalf {

@@ -231,13 +231,11 @@ const AllProducts = () => {
           </th>
           <th>Image</th>
           <th>Name</th>
+          <th>Code</th>
           <th>Category</th>
-          <th>Sub Category</th>
           <th>Brand</th>
-          
-          
-          <th>Sale Price</th>          
-          <th>Status</th>
+          <th>Unit</th>                    
+          <th>Price</th>                    
           <th>Actions</th>
         </tr>     
         

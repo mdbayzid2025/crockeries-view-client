@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import { Outlet } from 'react-router-dom'
 import styles from './MainLayout.module.css';
+import MobileHeader from '../components/MobileHeader/MobileHeader';
 
 
 const MainLayout = () => {
     const [isOpen, setIsOpen] = useState(true);
+    const [isClose, setIsClose] = useState(true);
     const [darkMode, setDarkMode] = useState(false);
   
     const toggleSidebar = () => {
@@ -17,15 +19,24 @@ const MainLayout = () => {
       document.body.classList.toggle('dark');
     };
   
+
+    console.log('isClose', isClose)
   return (
     <div>
+    <div className={styles.sidebarContainer}>    
         <Sidebar 
-        isOpen={isOpen} 
+        isOpen={isOpen}         
         toggleSidebar={toggleSidebar}
         darkMode={darkMode}
         toggleMode={toggleMode}
-        />
-        <div className={styles.content}  style={{padding: '20px' }}>
+        setIsClose={setIsClose}
+        isClose={isClose}
+        />        
+        </div>
+        <div className={styles.MobileHeader}>
+          <MobileHeader isClose={isClose} setIsClose={setIsClose}/>        
+        </div>
+        <div className={styles.content}  style={{padding: '20px' }}>          
             <Outlet />
         </div>
     </div>

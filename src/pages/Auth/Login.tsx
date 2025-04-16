@@ -2,16 +2,28 @@ import styles from './Login.module.css';
 import { Link } from 'react-router-dom';
 
 const Login = () => {
+  const handleLogin = e =>{
+    e.preventDefault()
+    const form = e.target;
+
+    const data = {
+      email: form.email.value,
+      password: form.password.value,
+
+    }
+    console.log("data", data);
+  }
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginForm}>
         <h2 className={styles.title}>Login</h2>
-        <form>
+        <form onSubmit={handleLogin}>
           <div className={styles.inputGroup}>
             <label htmlFor="email">Email</label>
             <input 
               type="email" 
               id="email" 
+              name='email'
               placeholder="Enter your email" 
               className={styles.input}
             />
@@ -21,6 +33,7 @@ const Login = () => {
             <input 
               type="password" 
               id="password" 
+              name='password'
               placeholder="Enter your password" 
               className={styles.input}
             />

@@ -5,12 +5,12 @@ import SidebarMenu from './Sidebar/SidebarMenu';
 // import SidebarMenu from './SidebarMenu';
 import ThemeToggle from './ThemeToggle';
 
-const Sidebar = ({ isOpen, toggleSidebar, darkMode, toggleMode }) => {
+const Sidebar = ({ isOpen, toggleSidebar, darkMode, toggleMode, setIsClose, isClose }) => {
   return (
-    <nav className={`${styles.sidebar} ${!isOpen ? styles.close : ''}`}>
-      <SidebarHeader isOpen={isOpen} toggleSidebar={toggleSidebar} />
+    <nav className={`${styles.sidebar} ${isClose ? styles.hide : styles.show} ${!isOpen ? styles.close : ''}`}>
+      <SidebarHeader isOpen={isOpen} setIsClose={setIsClose} isClose={isClose} toggleSidebar={toggleSidebar} />
       <div className={styles.menuBar}>
-        <SidebarMenu isOpen={isOpen} />
+        <SidebarMenu isOpen={isOpen}  setIsClose={setIsClose} isClose={isClose}/>
         <ThemeToggle darkMode={darkMode} toggleMode={toggleMode} />
       </div>
     </nav>

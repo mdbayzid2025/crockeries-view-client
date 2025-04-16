@@ -9,7 +9,7 @@ const menuItems = [
   { name: 'signup', icon: 'bx bx-user-plus', text: 'Signup', path: '/signup' },
 ];
 
-const SidebarMenu = ({ isOpen }) => {
+const SidebarMenu = ({ isOpen, setIsClose, isClose }) => {
   return (
     <div className={styles.menu}>
       <ul className={styles.menuLinks}>
@@ -20,6 +20,8 @@ const SidebarMenu = ({ isOpen }) => {
             text={item.text}
             link={item.path}
             isOpen={isOpen}
+            setIsClose={setIsClose}
+            isClose={isClose}
           />
         ))}
       </ul>
