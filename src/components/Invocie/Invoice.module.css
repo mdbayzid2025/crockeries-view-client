@@ -226,6 +226,15 @@
     background-color: #4a58b3;
   }
   
+.logoContain{
+      display: flex;
+      gap: 10px;
+      font-size: 15px;
+      span{
+        color: #3DC1A9;
+      }
+}
+
   /* Print styles */
   @media print {
     .printButton {
@@ -233,7 +242,7 @@
     }
     
     .invoiceContainer {
-      padding: 0;
+      padding: 30px;
       margin: 0;
     }
     

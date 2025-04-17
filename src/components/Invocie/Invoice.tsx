@@ -22,8 +22,9 @@ const reactToPrintFn = useReactToPrint({ contentRef });
             <tbody>
               <tr>
                 <td className={`${styles.wFull} ${styles.alignTop}`}>
-                  <div>
+                  <div className={styles.logoContain}>
                     <img src="https://menkoff.com/assets/brand-sample.png" className={styles.h12} alt="Company Logo" />
+                    <h1>Crockeries <span>View</span></h1>
                   </div>
                 </td>
 
@@ -54,8 +55,9 @@ const reactToPrintFn = useReactToPrint({ contentRef });
           </table>
         </div>
 
-        <div className={`${styles.bgSlate100} ${styles.px14} ${styles.py6} ${styles.textSm}`}>
-          <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
+        {/* <div className={`${styles.bgSlate100} ${styles.px14} ${styles.py6} ${styles.textSm}`}> */}
+        <div className={` ${styles.py6} ${styles.textSm}`}>
+          <table className={` ${styles.bgSlate100} ${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <tbody>
               <tr>
                 <td className={`${styles.wHalf} ${styles.alignTop}`}>
