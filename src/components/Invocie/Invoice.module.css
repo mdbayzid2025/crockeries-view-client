@@ -31,35 +31,19 @@
     width: 100%;
     overflow-x:auto;
   }
-  @media(max-width: 768px){
-    .wFull{
-    padding-inline: 0;
-    }   
-    .px14{
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    } 
-    .printButton{
-      top: 65px !important;
-      left: 18px;
-      right: 60% !important;
-    }
-    .tableContainer{
-      overflow-x: auto;
-    }
-    .tableContainer.px14{
-      padding-left: 0;
-      padding-right: 0;
-    }
-  }
+
+  
+  
+ 
   
   .wHalf {
     width: 50%;
   }
   
   .borderCollapse {
-    border-collapse: collapse;
+    border-collapse: collapse;        
   }
+  
   
   .borderSpacing0 {
     border-spacing: 0;
@@ -163,7 +147,7 @@
   }
   
   .alignTop {
-    vertical-align: top;
+    vertical-align: center;
   }
   
   .textSm {
@@ -212,7 +196,7 @@
   .printButton {
     position: fixed;
     top: 20px;
-    right: 20px;
+    right: 77px;
     padding: 8px 16px;
     background-color: #5c6ac4;
     color: white;
@@ -229,28 +213,183 @@
 .logoContain{
       display: flex;
       gap: 10px;
-      font-size: 15px;
+      font-size: 15px;      
       span{
         color: #3DC1A9;
       }
 }
 
-  /* Print styles */
-  @media print {
-    .printButton {
-      display: none;
-    }
-    
-    .invoiceContainer {
-      padding: 30px;
-      margin: 0;
-    }
-    
-    body {
-      -webkit-print-color-adjust: exact;
-    }
-  }
+.addressContainer {
+  padding-left: 3.5rem;
+  padding-right: 3.5rem;
+}
+
+ 
+
+
+  
   
   @page {
     margin: 0;
   }
+
+
+  
+.wrapper{
+  background: #fff;    
+}
+.itemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.label {
+  font-weight: 400;
+  font-size: 1rem;  
+  color: #6b7280;
+}
+
+.value {
+  font-weight: 600;
+  font-size: 1rem;  
+  color: #111827;
+}
+
+.totalContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .5rem 0;
+  border-top: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  
+}
+
+.totalLabel {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 2.25rem;
+  color: #111827;
+}
+
+.totalValue {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 2.25rem;
+  color: #4f46e5;
+}
+
+.productsTable{
+  tbody{
+    tr:last-child{
+      td:last-child {
+        /* border-bottom: none; */
+        /* background-color: blue; */
+      }
+    }
+  }
+  
+}
+
+.summaryTable{
+  tr{
+    border-top: none !important;    
+  }
+}
+
+/* Mobile View */
+ 
+@media(max-width: 768px){
+  .wFull{
+  padding-inline: 0;
+  }   
+  .px14{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  } 
+  .printButton{
+    top: 65px !important;
+    left: 18px;
+    right: 60% !important;
+  }
+  .logoContainer{
+    /* display: none; */      
+  }
+  .addressContainer{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .tableContainer{
+    overflow-x: auto;
+  }
+  .tableContainer.px14{
+    padding-left: 0;
+    padding-right: 0;      
+  }
+  .logoContain{
+    flex-direction: column;
+    padding-left: 10px;
+    gap: 5px;
+    h1{
+      font-size: 15px;
+      line-height: 20px;
+    }
+    img{
+      width: 50px;
+      margin: 0 auto;
+      object-fit: contain;
+    }
+  }
+}
+
+/* Print styles */
+@media print {
+  .printButton {
+    display: none;
+  }
+  .logoContainer{
+    display: block;
+  }
+  
+  .logoContain{
+      align-items: center;
+      padding-block: 10px;        
+      img{
+        width: 50px;
+        margin: 0;
+        object-fit: contain;
+      }
+  }
+  .invoiceContainer {
+    padding: 30px;
+    margin: 0;
+  }
+  .logoContain{
+    flex-direction: row;
+    h1{
+      font-size: 24px !important;
+    }      
+  }
+  .invoiceTable{
+    padding: 0 !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+  }
+  .timeSection{
+    tr {
+      border-top: none !important;        
+      td{
+        border-bottom: none;          
+      }
+    }
+  }
+  
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+}

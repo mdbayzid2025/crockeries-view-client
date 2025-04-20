@@ -21,16 +21,18 @@ const reactToPrintFn = useReactToPrint({ contentRef });
           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} `}>
             <tbody>
               <tr>
-                <td className={`${styles.wFull} ${styles.alignTop}`}>
+                <td className={`${styles.wFull} ${styles.alignTop} `}>
+                  <div className={`${styles.logoContainer}`}>
                   <div className={styles.logoContain}>
-                    <img src="https://menkoff.com/assets/brand-sample.png" className={styles.h12} alt="Company Logo" />
+                    <img src="	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt1PUqNjMHYFvt0o1hzlilB2YTjP1xt9zkvg&s" className={styles.h12} alt="Company Logo" />
                     <h1>Crockeries <span>View</span></h1>
                   </div>
+                  </div>                  
                 </td>
 
-                <td className={styles.alignTop}>
+                <td className={styles.alignTop} >
                   <div className={`${styles.textSm} `}>
-                    <table className={`${styles.borderCollapse} ${styles.borderSpacing0}`}>
+                    <table className={`${styles.borderCollapse} ${styles.timeSection} ${styles.borderSpacing0} ${styles.invoiceTable}`}>
                       <tbody>
                         <tr>
                           <td className={`${styles.borderR} ${styles.pr4}`}>
@@ -56,7 +58,7 @@ const reactToPrintFn = useReactToPrint({ contentRef });
         </div>
 
         {/* <div className={`${styles.bgSlate100} ${styles.px14} ${styles.py6} ${styles.textSm}`}> */}
-        <div className={` ${styles.py6} ${styles.textSm}`}>
+        <div className={` ${styles.py6} ${styles.textSm} ${styles.addressContainer}`}>
           <table className={` ${styles.bgSlate100} ${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <tbody>
               <tr>
@@ -86,7 +88,7 @@ const reactToPrintFn = useReactToPrint({ contentRef });
         </div>
 
         <div className={`${styles.px14} ${styles.py10} ${styles.textSm} ${styles.textNeutral700} ${styles.tableContainer}`}>
-          <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
+          <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.productsTable}`}>
             <thead>
               <tr>
                 <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl3} ${styles.fontBold} ${styles.textMain}`}>#</td>
@@ -128,7 +130,7 @@ const reactToPrintFn = useReactToPrint({ contentRef });
               </tr>
               <tr>
                 <td colSpan="7">
-                  <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
+                  <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.summaryTable}`}>
                     <tbody>
                       <tr>
                         <td className={styles.wFull}></td>
