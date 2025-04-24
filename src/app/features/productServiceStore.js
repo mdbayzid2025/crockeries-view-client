@@ -1,18 +1,12 @@
-// features/customers/customerService.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
 import { apiSlice } from "../api/apiSlice";
 
-export const productApiSlice = createApi({
-  reducerPath: 'productApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/v1/products' }),
-  tagTypes: ['Products'],
+export const productApiSlice = apiSlice.enhanceEndpoints({addTagTypes: ['Products']}).injectEndpoints({
   endpoints: builder  => ({
     getProducts: builder.query({
       query: ()=> 'products',
       providesTags: ['Products']
     }),
-
+    
     getSingleProduct: builder.query({
       query: (id)=> `product/${id}`
     }),

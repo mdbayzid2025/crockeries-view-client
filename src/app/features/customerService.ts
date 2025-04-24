@@ -1,22 +1,20 @@
 // features/customers/customerService.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const customerApi = createApi({
-  reducerPath: 'customerApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/customers' }),
-  tagTypes: ['Customer'],
+import { apiSlice } from '../api/apiSlice';
+
+export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']}).injectEndpoints({
   endpoints: (builder) => ({
     getCustomers: builder.query({
-      query: () => '',
+      query: () => 'customers',
       providesTags: ['Customer'],
     }),
     getCustomerById: builder.query({
       query: (id) => `/${id}`,
       providesTags: (result, error, id) => [{ type: 'Customer', id }],
     }),
-    createCustomer: builder.mutation({
+    addCustomer: builder.mutation({
       query: (customerData) => ({
-        url: '',
+        url: 'customers',
         method: 'POST',
         body: customerData,
       }),
@@ -43,7 +41,7 @@ export const customerApi = createApi({
 export const {
   useGetCustomersQuery,
   useGetCustomerByIdQuery,
-  useCreateCustomerMutation,
+  useAddCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
 } = customerApi;

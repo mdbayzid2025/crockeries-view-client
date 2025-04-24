@@ -1,8 +1,15 @@
-import styles from './Login.module.css';
-import { Link } from 'react-router-dom';
 
-const Login = () => {
-  const handleLogin = e =>{
+import { useLoginMutation } from '../../app/features/authService';
+import styles from './Login.module.css';
+import { Link, useNavigate } from 'react-router-dom';
+
+
+
+const LogIn = () => {
+  const [login, {isLoading, isError}] = useLoginMutation()
+  
+  const navigate = useNavigate();
+  const handleLogin = async e =>{
     e.preventDefault()
     const form = e.target;
 
@@ -11,7 +18,15 @@ const Login = () => {
       password: form.password.value,
 
     }
-    console.log("data", data);
+    try {
+      const result = await login(data).unwrap();
+      // Handle successful login
+      console.log(result)
+      navigate("/dashboard")
+    } catch (err) {
+      // Handle error
+      console.log(err?.data?.message)
+    }
   }
   return (
     <div className={styles.loginContainer}>
@@ -48,4 +63,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LogIn;

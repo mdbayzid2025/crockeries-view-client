@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import styles from '../../theme/exports/_form.module.css' 
 import ImageUploadSpinner from '../../components/Common/ImageUploadSpinner/ImageUploadSpinner';
+import { useAddCustomerMutation } from '../../app/features/customerService';
 
 const AddCustomer = () => {
   const [formData, setFormData] = useState({
@@ -9,11 +10,12 @@ const AddCustomer = () => {
       address: '',
       district: '',
       mobile: '',
-      trade_license: '',
-      profile: '',
-      image: null
+      trade_license: '',      
+      photo: null
     });
   
+    const [addCustomer, {isLoading, isError}] = useAddCustomerMutation();
+
     const [imagePreview, setImagePreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef(null);     
@@ -43,7 +45,7 @@ const AddCustomer = () => {
         
         setImagePreview(uploadedImageUrl?.url)
         setLoading(false);
-        setFormData(prev => ({ ...prev, profile: uploadedImageUrl?.url }));        
+        setFormData(prev => ({ ...prev, photo: uploadedImageUrl?.url }));        
       }
     };
   
@@ -52,18 +54,24 @@ const AddCustomer = () => {
     };
   
     const removeImage = () => {
-      setFormData(prev => ({ ...prev, image: null }));
+      setFormData(prev => ({ ...prev, photo: null }));
       setImagePreview(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     };
   
-    const handleSubmit = (e:any) => {
+    const handleSubmit = async (e:any) => {
       e.preventDefault();
-      console.log('Form submitted:', formData);
+    
       // Add your form submission logic here
-
+      
+        try {
+          const result = await addCustomer(formData);
+          console.log(result);
+        } catch (error) {
+          console.log(error);
+        }
       localStorage.setItem('client', JSON.stringify(formData))
     }; 
   return (

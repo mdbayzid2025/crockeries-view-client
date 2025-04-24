@@ -1,10 +1,8 @@
 // features/orders/orderService.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const orderApi = createApi({
-  reducerPath: 'orderApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/orders' }),
-  tagTypes: ['Order'],
+import { apiSlice } from '../api/apiSlice';
+
+export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
       query: () => '',

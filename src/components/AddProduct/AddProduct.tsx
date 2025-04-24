@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './AddProduct.module.css';
 import ImageUploadSpinner from '../Common/ImageUploadSpinner/ImageUploadSpinner';
+import { useGetCategoriesQuery } from '../../app/features/categorySlice';
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,54 @@ const AddProduct = () => {
 const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const {data: categories1, isLoading  } = useGetCategoriesQuery()
+
+  const [selectedCategory, setSelectedCategory] = useState(null)
+
+    // State for showing/hiding add inputs
+    const [showAddCategory, setShowAddCategory] = useState(false);
+    const [showAddBrand, setShowAddBrand] = useState(false);
+    const [newCategory, setNewCategory] = useState('');
+    const [newBrand, setNewBrand] = useState('');
+
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [brandFilter, setBrandFilter] = useState('');
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isBrandOpen, setIsBrandOpen] = useState(false);
+
+    // Refs for detecting clicks outside
+  const categoryRef = useRef(null);
+  const brandRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (categoryRef.current && !categoryRef.current.contains(event.target)) {
+        setIsCategoryOpen(false);
+      }
+      if (brandRef.current && !brandRef.current.contains(event.target)) {
+        setIsBrandOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter categories based on input
+  const filteredCategories = categories1?.data?.filter(cat => 
+    cat.category.toLowerCase().includes(categoryFilter.toLowerCase())
+  ) || [];
+
+  // Filter brands based on input
+  const filteredBrands = selectedCategory?.brands?.filter(brand => 
+    brand.toLowerCase().includes(brandFilter.toLowerCase())
+  ) || [];
+
+
+  let loadText;
+
+  if(isLoading) return loadText = "loading"
 
   const categories = [
     'Disposable',
@@ -60,7 +109,7 @@ const [loading, setLoading] = useState(false);
       
       setImagePreview(uploadedImageUrl?.url)
       setLoading(false);
-      setFormData(prev => ({ ...prev, profile: uploadedImageUrl?.url }));        
+      setFormData(prev => ({ ...prev, image: uploadedImageUrl?.url }));        
     }
   };
 
@@ -82,12 +131,64 @@ const [loading, setLoading] = useState(false);
     // Add your form submission logic here
   };
 
+  
+    if(categories1){
+      console.log(categories1?.data)
+    }
+  
+    const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedValue = e.target.value;
+      console.log("Selected category:", selectedValue);
+      
+      // If you need the full category object, find it from your categories array
+      const selectedCategory = categories1?.data.find(
+        (cat) => cat.category === selectedValue
+      );
+      setSelectedCategory(selectedCategory);
+    
+      // Update your form data
+      setFormData({
+        ...formData,
+        category: selectedValue
+      });
+    };
+
+    const handleSelectCategory =(item) =>{
+      setSelectedCategory(item);
+      console.log('sssssss', item)
+    }
+
+
+     // Handle adding new category
+  const handleAddCategory = () => {
+    if (newCategory.trim()) {
+      // Here you would typically call an API to add the new category
+      console.log('Adding new category:', newCategory);
+      // Then reset and hide the input
+      setNewCategory('');
+      setShowAddCategory(false);
+    }
+  };
+
+  // Handle adding new brand
+  const handleAddBrand = () => {
+    if (newBrand.trim()) {
+      // Here you would typically call an API to add the new brand
+      console.log('Adding new brand:', newBrand);
+      // Then reset and hide the input
+      setNewBrand('');
+      setShowAddBrand(false);
+    }
+  };
+  
   return (
     <div className={styles.formContainer}>
       <div className={styles.formCard}>
         <h2 className={styles.formTitle}>Add New Product</h2>
         
         <form onSubmit={handleSubmit}>
+
+       
 
         <div className={styles.doubleInput}>
   {/* Title */}
@@ -121,46 +222,132 @@ const [loading, setLoading] = useState(false);
           </div>
         </div>
         
-
-          <div className={styles.doubleInput}>
- {/* Category */}
- <div className={styles.formGroup}>
+        <div className={styles.doubleInput}>
+        {/* Category with filter */}
+        <div className={styles.formGroup} ref={categoryRef}>
+        <div className={styles.labelContainer}>
             <label htmlFor="category" className={styles.label}>Category*</label>
-            <select
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className={styles.input}
-              required
+            <button 
+              type="button" 
+              className={styles.addButton}
+              onClick={() => setShowAddCategory(!showAddCategory)}
             >
-              <option value="">Select a category</option>
-              {categories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
-              ))}
-            </select>
+              {showAddCategory ? 'Cancel' : '+ Add Category'}
+            </button>
           </div>
 
-
-          {/* Brand */}
- <div className={styles.formGroup}>
-            <label htmlFor="category" className={styles.label}>Brand*</label>
-            <select
-              id="category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className={styles.input}
-              required
-            >
-              <option value="">Select a category</option>
-              {brands.map((brand, index) => (
-                <option key={index} value={brand}>{brand}</option>
-              ))}
-            </select>
-          </div>
-          </div>
+          {showAddCategory && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Enter new category"
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddCategory}
+              >
+                Add
+              </button>
+            </div>
+          )}
           
+          {!showAddCategory &&<div 
+            className={`${styles.customSelect} ${isCategoryOpen ? styles.open : ''}`}
+            onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+          >
+            <div className={styles.selectedValue}>
+              {formData.category || 'Select a category'}
+            </div>
+            {isCategoryOpen && (
+              <div className={styles.selectDropdown}>
+                <div className={styles.searchBox}>
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className={styles.filterInput}
+                    autoFocus
+                  />
+                </div>
+                <div className={styles.optionsContainer}>
+                  {filteredCategories.length > 0 ? (
+                    filteredCategories.map((item) => (
+                      <div
+                        key={item._id}
+                        className={styles.option}
+                        onClick={() => {
+                          setFormData({...formData, category: item.category});
+                          setIsCategoryOpen(false);
+                          setCategoryFilter('');
+                          handleSelectCategory(item)
+                        }}
+                      >
+                        {item.category}
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.noResults}>No categories found</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>}
+          {/* Add Category button would go here */}
+        </div>
+
+        {/* Brand with filter */}
+        <div className={styles.formGroup} ref={brandRef}>
+        <div className={styles.labelContainer}>
+            <label htmlFor="brand" className={styles.label}>Brand*</label>
+            <button 
+              type="button" 
+              className={styles.addButton}
+              onClick={() => setShowAddBrand(!showAddBrand)}
+            >
+              {showAddBrand ? 'Cancel' : '+ Add Brand'}
+            </button>
+          </div>
+
+          {showAddBrand && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={newBrand}
+                onChange={(e) => setNewBrand(e.target.value)}
+                placeholder="Enter new brand"
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddBrand}
+              >
+                Add
+              </button>
+            </div>
+          )}
+
+        {!showAddBrand &&  <select
+            id="brand"
+            name="brand"
+            value={formData.brand}
+            onChange={handleChange}
+            className={styles.input}
+            required
+          >
+            <option value="">Select a brand</option>
+            {selectedCategory?.brands?.map((brand, index) => (
+              <option key={index} value={brand}>{brand}</option>
+            ))}
+          </select>}
+          {/* Add Brand button would go here */}
+        </div>
+      </div>                 
 
  {/* Price and Discount */}
  <div className={styles.doubleInput}>
@@ -190,12 +377,13 @@ const [loading, setLoading] = useState(false);
                   type="number"
                   id="discount"
                   name="discount"
-                  value={formData.discount}
+                  value={formData.discount ?? 0}
                   onChange={handleChange}
                   placeholder="0"
                   className={styles.input}
                   min="0"
                   max="100"
+                  disabled
                 />
                 <span className={styles.percent}>%</span>
               </div>

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
-import Login from "../pages/Auth/Login";
+import LogIn from "../pages/Auth/LogIn";
 import Signup from "../pages/Auth/Signup";
 import AllProducts from "../pages/AllProducts/AllProducts";
 import Order from "../pages/Order/Order";
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
             },          
             {
                 path: "/login",
-                element: <Login />
+                element: <LogIn />
             },          
             {
                 path: "/invoice/:id",

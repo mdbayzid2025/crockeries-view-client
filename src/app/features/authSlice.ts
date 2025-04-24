@@ -1,49 +1,31 @@
-// features/products/productService.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+// features/auth/authSlice.js
+import { createSlice } from '@reduxjs/toolkit';
 
-export const productApi = createApi({
-  reducerPath: 'productApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/products' }),
-  tagTypes: ['Product'],
-  endpoints: (builder) => ({
-    getProducts: builder.query({
-      query: () => '',
-      providesTags: ['Product'],
-    }),
-    getProductById: builder.query({
-      query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Product', id }],
-    }),
-    createProduct: builder.mutation({
-      query: (productData) => ({
-        url: '',
-        method: 'POST',
-        body: productData,
-      }),
-      invalidatesTags: ['Product'],
-    }),
-    updateProduct: builder.mutation({
-      query: ({ id, ...productData }) => ({
-        url: `/${id}`,
-        method: 'PUT',
-        body: productData,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Product', id }],
-    }),
-    deleteProduct: builder.mutation({
-      query: (id) => ({
-        url: `/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: ['Product'],
-    }),
-  }),
+const initialState = {
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  loading: false,
+  error: null,
+};
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    setCredentials: (state, action) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+    },
+  },
 });
 
-export const {
-  useGetProductsQuery,
-  useGetProductByIdQuery,
-  useCreateProductMutation,
-  useUpdateProductMutation,
-  useDeleteProductMutation,
-} = productApi;
+export const { setCredentials, logout } = authSlice.actions;
+
+export default authSlice.reducer;

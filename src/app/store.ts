@@ -1,19 +1,14 @@
-// app/store.js
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '../features/auth/authSlice';
-import productReducer from '../features/products/productSlice';
-import orderReducer from '../features/orders/orderSlice';
-import customerReducer from '../features/customers/customerSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./features/authSlice";
+
+import { apiSlice } from "./api/apiSlice";
+
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    products: productReducer,
-    orders: orderReducer,
-    customers: customerReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,   
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
-});
+    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware),
+  devTools:  true,
+})

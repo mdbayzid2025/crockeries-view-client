@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import styles from './Signup.module.css';
 import { Link } from 'react-router-dom';
+import { useRegisterMutation } from '../../app/features/authService';
 
 const Signup = () => {
-
-  const [formData, setFormData] = useState({    
+const [register, {isLoading, isError}] = useRegisterMutation();
+  
+const [formData, setFormData] = useState({    
     email: '',
     password: '',
     confirmPassword: ''
@@ -41,12 +43,21 @@ const Signup = () => {
     return true;
   };
   
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     
     if (validatePassword()) {
       // Form is valid, proceed with submission
-      console.log('Form submitted:', formData);            
+      console.log('Form submitted:', formData);      
+      try {
+        const result = await register({
+          email: formData?.email,
+          password: formData?.password,
+        })
+        console.log('ssss', result);
+      } catch (error) {
+        console.log('eeee', error?.data?.message)
+      }      
     }
   };
 
