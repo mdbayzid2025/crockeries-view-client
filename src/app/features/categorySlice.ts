@@ -2,7 +2,7 @@
 
 import { apiSlice } from "../api/apiSlice";
 
-export const categoryApiSlice =apiSlice.enhanceEndpoints({addTagTypes: ['Category']}).injectEndpoints({
+export const categoryApiSlice =apiSlice.enhanceEndpoints({addTagTypes: ['Category', 'Brand']}).injectEndpoints({
   endpoints: builder  => ({
     getCategories: builder.query({
       query: ()=> 'category',
@@ -14,10 +14,11 @@ export const categoryApiSlice =apiSlice.enhanceEndpoints({addTagTypes: ['Categor
     }),
     addCategory: builder.mutation({
       query: (data)=>({
-        url: ``,
+        url: `category`,
         method: "POST",
         body: data,
-      })
+      }),
+      invalidatesTags: ["Category"]
     }),
     updateCategory: builder.mutation({
       query: ({id, ...rest})=>({
@@ -34,12 +35,12 @@ export const categoryApiSlice =apiSlice.enhanceEndpoints({addTagTypes: ['Categor
       invalidatesTags: ["Category"]
     }),
     addBrand: builder.mutation({
-      query: (body)=>({
-        url: `products`,
+      query: ({id, ...rest})=>({
+        url: `category/${id}/new-brand`,
         method: "POST",
-        body,
+        body: rest,
       }),
-      invalidatesTags: ["Category"]
+      invalidatesTags: ["Category", "Brand"]
     }),
     deleteBrand: builder.mutation({
         query: ({id, ...rest})=>({

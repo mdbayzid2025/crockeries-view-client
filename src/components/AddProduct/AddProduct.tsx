@@ -1,8 +1,9 @@
+
 import { useState, useRef, useEffect } from 'react';
 import styles from './AddProduct.module.css';
 import ImageUploadSpinner from '../Common/ImageUploadSpinner/ImageUploadSpinner';
-import { useGetCategoriesQuery } from '../../app/features/categorySlice';
-
+import { useAddBrandMutation, useAddCategoryMutation, useGetCategoriesQuery } from '../../app/features/categorySlice';
+import { FiEdit2, FiCheck, FiX, FiPlus } from 'react-icons/fi';
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -18,14 +19,31 @@ const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
   const {data: categories1, isLoading  } = useGetCategoriesQuery()
-
+  
+  const [addCategory, {isLoading: loading3}]= useAddCategoryMutation()
+ const [addBrand, {isLoading: loading4}] = useAddBrandMutation()
   const [selectedCategory, setSelectedCategory] = useState(null)
-
+  const [selectBrands, setSelectBrands]   = useState([])
     // State for showing/hiding add inputs
     const [showAddCategory, setShowAddCategory] = useState(false);
     const [showAddBrand, setShowAddBrand] = useState(false);
     const [newCategory, setNewCategory] = useState('');
     const [newBrand, setNewBrand] = useState('');
+
+
+
+    const [showEditCategory, setShowEditCategory] = useState(false);
+    const [updateCategoryValue, setUpdateCategoryValue] = useState("")
+   
+    const [showEditBrand, setShowEditBrand] = useState(false);
+    const [updateBrandValue, setUpdateBrandValue] = useState("")
+
+    // State for editing
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [editingBrand, setEditingBrand] = useState(null);
+  const [editCategoryValue, setEditCategoryValue] = useState('');
+  const [editBrandValue, setEditBrandValue] = useState('');
+
 
     const [categoryFilter, setCategoryFilter] = useState('');
     const [brandFilter, setBrandFilter] = useState('');
@@ -62,9 +80,9 @@ const [loading, setLoading] = useState(false);
   ) || [];
 
 
-  let loadText;
+  let loadText : string;
 
-  if(isLoading) return loadText = "loading"
+  if(isLoading ) return loadText = "loading"
 
   const categories = [
     'Disposable',
@@ -132,10 +150,6 @@ const [loading, setLoading] = useState(false);
   };
 
   
-    if(categories1){
-      console.log(categories1?.data)
-    }
-  
     const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const selectedValue = e.target.value;
       console.log("Selected category:", selectedValue);
@@ -144,6 +158,7 @@ const [loading, setLoading] = useState(false);
       const selectedCategory = categories1?.data.find(
         (cat) => cat.category === selectedValue
       );
+      console.log("uuuuuuu", selectedCategory)
       setSelectedCategory(selectedCategory);
     
       // Update your form data
@@ -155,31 +170,52 @@ const [loading, setLoading] = useState(false);
 
     const handleSelectCategory =(item) =>{
       setSelectedCategory(item);
+      setSelectBrands(item?.brands)
       console.log('sssssss', item)
     }
 
 
+
      // Handle adding new category
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (newCategory.trim()) {
       // Here you would typically call an API to add the new category
       console.log('Adding new category:', newCategory);
-      // Then reset and hide the input
+      
+      try {
+        const result = await addCategory({category: newCategory, brands: []})        
+        // Then reset and hide the input
+        console.log(result);
       setNewCategory('');
       setShowAddCategory(false);
+      } catch (err) {
+        // Handle error
+        console.log(err?.data?.message)
+      }
+      
     }
   };
 
   // Handle adding new brand
-  const handleAddBrand = () => {
-    if (newBrand.trim()) {
-      // Here you would typically call an API to add the new brand
-      console.log('Adding new brand:', newBrand);
-      // Then reset and hide the input
-      setNewBrand('');
+  const handleAddBrand = async () => {
+    if (newBrand.trim()) {              
+      try {
+        console.log("newBrand", newBrand);
+        const id = selectedCategory?._id;
+        const result = await addBrand({id, brand: newBrand})        
+        // Then reset and hide the input
+        console.log(result);        
+        
+        setSelectBrands(result?.data?.brands)
+        setNewBrand('');
       setShowAddBrand(false);
+    }  catch (err) {
+      // Handle error
+      console.log(err?.data?.message)
     }
-  };
+  }
+};
+
   
   return (
     <div className={styles.formContainer}>
@@ -250,12 +286,53 @@ const [loading, setLoading] = useState(false);
                 className={styles.confirmAddButton}
                 onClick={handleAddCategory}
               >
-                Add
+                {/* {loadText ? loadText :  "Add"} */}
+                {loading3 ? "loading..." : "Add"}
+              </button>
+            </div>
+          )}
+
+{showAddCategory && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={updateCategoryValue}
+                onChange={(e) => setUpdateCategoryValue(e.target.value)}
+                placeholder="Enter new category"
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddCategory}
+              >
+                {/* {loadText ? loadText :  "Add"} */}
+                {loading3 ? "loading..." : "Add"}
+              </button>
+            </div>
+          )}
+
+          {showEditCategory && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={updateCategoryValue}
+                onChange={(e) => setUpdateCategoryValue(e.target.value)}
+                placeholder={`${updateCategoryValue}`}
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddCategory}
+              >
+                {/* {loadText ? loadText :  "Add"} */}
+                {loading3 ? "loading..." : "Update"}
               </button>
             </div>
           )}
           
-          {!showAddCategory &&<div 
+          {!showAddCategory && !showEditCategory &&<div 
             className={`${styles.customSelect} ${isCategoryOpen ? styles.open : ''}`}
             onClick={() => setIsCategoryOpen(!isCategoryOpen)}
           >
@@ -287,7 +364,7 @@ const [loading, setLoading] = useState(false);
                           handleSelectCategory(item)
                         }}
                       >
-                        {item.category}
+                        <span>{item.category}</span>  <span onClick={()=>{setShowEditCategory(!showEditCategory); setUpdateCategoryValue(item.category)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span>
                       </div>
                     ))
                   ) : (
@@ -327,7 +404,27 @@ const [loading, setLoading] = useState(false);
                 className={styles.confirmAddButton}
                 onClick={handleAddBrand}
               >
-                Add
+                {loading3 ? "loading..." :  "Add"}
+              </button>
+            </div>
+          )}
+
+        {showEditBrand && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={updateBrandValue}
+                onChange={(e) => setUpdateBrandValue(e.target.value)}
+                placeholder={`${updateBrandValue}`}
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddCategory}
+              >
+                {/* {loadText ? loadText :  "Add"} */}
+                {loading3 ? "loading..." : "Update"}
               </button>
             </div>
           )}
@@ -341,8 +438,8 @@ const [loading, setLoading] = useState(false);
             required
           >
             <option value="">Select a brand</option>
-            {selectedCategory?.brands?.map((brand, index) => (
-              <option key={index} value={brand}>{brand}</option>
+            {selectBrands && selectBrands?.map((brand, index) => (
+              <option key={index} value={brand}>{brand} <span onClick={()=>{setShowEditBrand(!showEditBrand); setUpdateBrandValue(brand)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span></option>              
             ))}
           </select>}
           {/* Add Brand button would go here */}
