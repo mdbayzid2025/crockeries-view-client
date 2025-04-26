@@ -4,12 +4,13 @@ import styles from './AddProduct.module.css';
 import ImageUploadSpinner from '../Common/ImageUploadSpinner/ImageUploadSpinner';
 import { useAddBrandMutation, useAddCategoryMutation, useGetCategoriesQuery } from '../../app/features/categorySlice';
 import { FiEdit2, FiCheck, FiX, FiPlus } from 'react-icons/fi';
+import { GiConsoleController } from 'react-icons/gi';
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: '',
     code: '',
     category: '',
-    brand: '',
+    brand: '',    
     price: '',
     discount: '',
     description: '',
@@ -30,6 +31,7 @@ const [loading, setLoading] = useState(false);
     const [newCategory, setNewCategory] = useState('');
     const [newBrand, setNewBrand] = useState('');
 
+    const [allBrand, setAllBrand ]  = useState("")
 
 
     const [showEditCategory, setShowEditCategory] = useState(false);
@@ -49,6 +51,8 @@ const [loading, setLoading] = useState(false);
     const [brandFilter, setBrandFilter] = useState('');
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [isBrandOpen, setIsBrandOpen] = useState(false);
+
+    const [isOpen, setIsOpen] = useState(false)
 
     // Refs for detecting clicks outside
   const categoryRef = useRef(null);
@@ -75,11 +79,12 @@ const [loading, setLoading] = useState(false);
   ) || [];
 
   // Filter brands based on input
-  const filteredBrands = selectedCategory?.brands?.filter(brand => 
+  const filteredBrands = selectBrands?.filter(brand => 
     brand.toLowerCase().includes(brandFilter.toLowerCase())
   ) || [];
 
 
+  console.log("filteredBrands", selectBrands)
   let loadText : string;
 
   if(isLoading ) return loadText = "loading"
@@ -216,15 +221,189 @@ const [loading, setLoading] = useState(false);
   }
 };
 
+const onChange = (data) =>{
+  console.log(data)
+  setFormData({...formData, brand: data})
+}
   
   return (
     <div className={styles.formContainer}>
       <div className={styles.formCard}>
         <h2 className={styles.formTitle}>Add New Product</h2>
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>        
 
-       
+        <div className={styles.doubleInput}>
+        <div className={styles.formGroup}>
+      <div 
+        className={styles.selectHeader}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {formData?.brand || "Select a brand"}
+      </div>
+      
+      {isOpen && (
+        <div className={styles.selectDropdown}>    
+          <div className={styles.searchBox}>
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className={styles.filterInput}
+                    autoFocus
+                  />
+                </div>    
+                <div className={styles.optionsContainer}>
+          {filteredBrands && filteredBrands.map((brand, index) => (
+            <div key={index} className={styles.option}>
+              <div 
+                 className={styles.option}
+                onClick={() => {
+                  onChange(brand);
+                  setIsOpen(false);
+                }}
+              >
+                {brand}
+              </div>
+              
+              <div className={styles.optionActions}>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(brand);
+                  }}
+                  className={styles.editBtn}
+                >
+                  <FiEdit2 color="blue" /> Edit
+                </button>
+                
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(brand);
+                  }}
+                  className={styles.deleteBtn}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+          </div>  
+          </div>        
+      )}
+    </div>
+
+    {/* ----------- Category to Brand ------------ */}
+     {/* Category with filter */}
+     <div className={styles.formGroup} ref={brandRef}>
+        <div className={styles.labelContainer}>
+            <label htmlFor="category" className={styles.label}>Brand*</label>
+           {!showEditCategory && <button 
+              type="button" 
+              className={styles.addButton}
+              onClick={() => setShowAddCategory(!showAddCategory)}
+            >
+              {showAddCategory ? 'Cancel' : '+ Add Brand'}
+            </button>}
+
+            {showEditCategory && <button 
+              type="button" 
+              className={styles.addButton}
+              onClick={() => setShowEditCategory(!showEditCategory)}
+            >
+              Cancel
+            </button>}
+          </div>        
+
+{showAddCategory && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={updateCategoryValue}
+                onChange={(e) => setUpdateCategoryValue(e.target.value)}
+                placeholder="Enter new category"
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddCategory}
+              >
+                {/* {loadText ? loadText :  "Add"} */}
+                {loading3 ? "loading..." : "Add"}
+              </button>
+            </div>
+          )}
+
+          {showEditCategory && (
+            <div className={styles.addInputContainer}>
+              <input
+                type="text"
+                value={updateCategoryValue}
+                onChange={(e) => setUpdateCategoryValue(e.target.value)}
+                placeholder={`${updateCategoryValue}`}
+                className={styles.input}
+              />
+              <button 
+                type="button" 
+                className={styles.confirmAddButton}
+                onClick={handleAddCategory}
+              >
+                {/* {loadText ? loadText :  "Add"} */}
+                {loading3 ? "loading..." : "Update"}
+              </button>
+            </div>
+          )}
+          
+          {!showAddCategory && !showEditCategory &&<div 
+            className={`${styles.customSelect} ${isCategoryOpen ? styles.open : ''}`}
+            onClick={() => setIsBrandOpen(!isBrandOpen)}
+          >
+            <div className={styles.selectedValue}>
+              {formData.category || 'Select a category'}
+            </div>
+            {isBrandOpen && (
+              <div className={styles.selectDropdown}>
+                <div className={styles.searchBox}>
+                  <input
+                    type="text"
+                    placeholder="Search categories..."
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className={styles.filterInput}
+                    autoFocus
+                  />
+                </div>
+                <div className={styles.optionsContainer}>
+                  {filteredBrands.length > 0 ? (
+                    filteredBrands.map((item) => (
+                      <div
+                        key={item._id}
+                        className={styles.option}
+                        onClick={() => {
+                          onChange(item);
+                          setIsOpen(false);
+                          // setFormData({...formData, category: item.category});
+                          setIsCategoryOpen(false);
+                          setCategoryFilter('');
+                          handleSelectCategory(item)
+                        }}
+                      >
+                        <span>{item}</span>  <span onClick={()=>{setShowEditCategory(!showEditCategory); setUpdateCategoryValue(item.category)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.noResults}>No categories found</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>}
+          {/* Add Category button would go here */}
+        </div>
+    </div>
 
         <div className={styles.doubleInput}>
   {/* Title */}
@@ -263,34 +442,22 @@ const [loading, setLoading] = useState(false);
         <div className={styles.formGroup} ref={categoryRef}>
         <div className={styles.labelContainer}>
             <label htmlFor="category" className={styles.label}>Category*</label>
-            <button 
+           {!showEditCategory && <button 
               type="button" 
               className={styles.addButton}
               onClick={() => setShowAddCategory(!showAddCategory)}
             >
               {showAddCategory ? 'Cancel' : '+ Add Category'}
-            </button>
-          </div>
+            </button>}
 
-          {showAddCategory && (
-            <div className={styles.addInputContainer}>
-              <input
-                type="text"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Enter new category"
-                className={styles.input}
-              />
-              <button 
-                type="button" 
-                className={styles.confirmAddButton}
-                onClick={handleAddCategory}
-              >
-                {/* {loadText ? loadText :  "Add"} */}
-                {loading3 ? "loading..." : "Add"}
-              </button>
-            </div>
-          )}
+            {showEditCategory && <button 
+              type="button" 
+              className={styles.addButton}
+              onClick={() => setShowEditCategory(!showEditCategory)}
+            >
+              Cancel
+            </button>}
+          </div>        
 
 {showAddCategory && (
             <div className={styles.addInputContainer}>
@@ -381,13 +548,21 @@ const [loading, setLoading] = useState(false);
         <div className={styles.formGroup} ref={brandRef}>
         <div className={styles.labelContainer}>
             <label htmlFor="brand" className={styles.label}>Brand*</label>
-            <button 
+           {!showEditBrand && <button 
               type="button" 
               className={styles.addButton}
               onClick={() => setShowAddBrand(!showAddBrand)}
             >
               {showAddBrand ? 'Cancel' : '+ Add Brand'}
-            </button>
+            </button>}
+
+            {showEditBrand && <button 
+              type="button" 
+              className={styles.addButton}
+              onClick={() => setShowEditCategory(!showEditCategory)}
+            >
+              Cancel
+            </button>}
           </div>
 
           {showAddBrand && (
@@ -439,7 +614,9 @@ const [loading, setLoading] = useState(false);
           >
             <option value="">Select a brand</option>
             {selectBrands && selectBrands?.map((brand, index) => (
-              <option key={index} value={brand}>{brand} <span onClick={()=>{setShowEditBrand(!showEditBrand); setUpdateBrandValue(brand)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span></option>              
+              <option key={index} value={brand} className={styles.brandOption}>
+                <span>{brand}</span> 
+                <span onClick={()=>{setShowEditBrand(!showEditBrand); setUpdateBrandValue(brand)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span></option>              
             ))}
           </select>}
           {/* Add Brand button would go here */}
