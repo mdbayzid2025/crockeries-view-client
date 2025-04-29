@@ -22,7 +22,7 @@ const Order = () => {
         <div className={styles.content}>
         {selected === 'Ladger Order' && <AllOrder />}
         {selected === 'Rough Order' && <DraftOrder />}
-        {selected === 'Add Order' && <AddOrder />}
+        {selected === 'Add Order' && <AddOrder setSelectTab={setSelectTab}/>}
         </div>
         
     </div>

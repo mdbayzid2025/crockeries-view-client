@@ -5,16 +5,16 @@ import { apiSlice } from '../api/apiSlice';
 export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
-      query: () => '',
+      query: () => '/orders',
       providesTags: ['Order'],
     }),
     getOrderById: builder.query({
-      query: (id) => `/${id}`,
+      query: (id) => `orders/${id}`,
       providesTags: (result, error, id) => [{ type: 'Order', id }],
     }),
     createOrder: builder.mutation({
       query: (orderData) => ({
-        url: '',
+        url: 'orders/create',
         method: 'POST',
         body: orderData,
       }),
@@ -22,7 +22,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
     }),
     updateOrder: builder.mutation({
       query: ({ id, ...orderData }) => ({
-        url: `/${id}`,
+        url: `orders/${id}`,
         method: 'PUT',
         body: orderData,
       }),
@@ -30,7 +30,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
     }),
     deleteOrder: builder.mutation({
       query: (id) => ({
-        url: `/${id}`,
+        url: `orders/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Order'],

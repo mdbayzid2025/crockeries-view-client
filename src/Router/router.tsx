@@ -9,6 +9,7 @@ import Order from "../pages/Order/Order";
 import Customers from "../pages/Customer/Customers";
 import Invoice from "../components/Invocie/Invoice";
 import UpdateProduct from "../pages/AllProducts/UpdateProduct";
+import UpdateOrder from "../pages/Order/UpdateOrder/UpdateOrder";
 
 
 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: "/product/:id",
                 element: <UpdateProduct />
+            },          
+            {
+                path: "/order/:id",
+                element: <UpdateOrder />
             },          
             {
                 path: "/customers",

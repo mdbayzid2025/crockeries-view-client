@@ -3,6 +3,7 @@
     margin-top: 12px;
     overflow: hidden;
     overflow-x: auto;
+    margin-bottom: 50px;
   }
   
   table{
@@ -141,6 +142,46 @@ background-color: #F3F4F6;
   background-color: #4a58b3;
 }
 
+/* Edit button styles */
+.editButton {  
+  padding: 5px 10px;
+  background-color: #9e6213;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  /* z-index: 1000; */
+  text-decoration: none;  
+  display: inline-block;
+  
+}
+
+.editButton:hover {
+  background-color: #a5601f;
+}
+
+/* Edit button styles */
+.deleteButton {  
+  padding: 5px 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  /* z-index: 1000; */
+  text-decoration: none;  
+  display: inline-block;
+  
+}
+
+.deleteButton:hover {
+  background-color: #881e1e;
+}
+
+.btnContainer{
+  display: flex;
+  gap: 10px;
+}
 
 .container{
   position: sticky;
@@ -232,7 +273,10 @@ background-color: #F3F4F6;
     font-size: 12px;
     padding-top: 30px;
     .customer{
-      font-size: 15px;
+      font-size: 12px;
+    }
+    .address{
+      font-size: 11px;
     }
   }
 

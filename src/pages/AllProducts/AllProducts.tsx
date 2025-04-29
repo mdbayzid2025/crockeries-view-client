@@ -87,9 +87,7 @@ const handleDelete = async (id: string) => {
       console.log("delete r", result)
     } catch (error) {
       console.log('Item deleted:', error);
-    }
-    
-    
+    }        
     }
 };
   return (

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import styles from './AddOrder.module.css';
 import { useGetProductsQuery } from '../../../app/features/productSlice';
 import { useGetCustomersQuery } from '../../../app/features/customerService';
+import { useCreateOrderMutation } from '../../../app/features/orderService';
+import ButtonLoader from '../../../components/Shared/ButtonLoader';
 
 
-const AddOrder = () => {
+const AddOrder = ({setSelectTab}) => {
   const [formData, setFormData] = useState({
     customer_code: '',
     customer_name: '',
@@ -18,6 +20,7 @@ const AddOrder = () => {
 
   const { data, error, isLoading } = useGetProductsQuery();
   const { data: customers, isLoading: loadingCustomers, isError: errorCustomers, refetch } = useGetCustomersQuery();
+  const [createOrder, {isLoading: orderLoading }] = useCreateOrderMutation()
   const [searchTerm, setSearchTerm] = useState('');
   const [customerSearchTerm, setCustomerSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -25,6 +28,8 @@ const AddOrder = () => {
 
   const [searchCustomerResults, setSearchCustomerResults] = useState([]);
   const [showCustomerSearchResults, setShowCustomerSearchResults] = useState(false);
+
+    const [loading, setLoading] = useState(false);
 
   // --------------- Customer Filter Section -----------------
 
@@ -73,8 +78,7 @@ const AddOrder = () => {
   useEffect(() => {
     const subTotal = formData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const totalDiscount = formData.items.reduce((sum, item) => sum + Number(item?.discount), 0);
-    
-    console.log("dddd", totalDiscount)
+        
     setSummary({
       subTotal,
       totalDiscount,
@@ -87,7 +91,7 @@ const AddOrder = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = (e) => {    
     const term = e.target.value;
     setSearchTerm(term);
     
@@ -143,12 +147,18 @@ const AddOrder = () => {
     setFormData(prev => ({ ...prev, items: updatedItems }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Order submitted:', formData);
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    setLoading(true)
     
-    // Add your order submission logic here
-    localStorage.setItem('order', JSON.stringify(formData));
+   try {    
+    const result = await createOrder(formData)
+    console.log(result);
+    setLoading(false);
+    setSelectTab("Ladger Order")
+   } catch (error) {
+    console.log(error?.message)
+   }    
   };
 
   return (
@@ -367,7 +377,7 @@ const AddOrder = () => {
                           </div>
                         </td>
                         <td>
-                          {((item.price * item.quantity) * (100 - item.discount) / 100).toFixed(2)}
+                          {((item.price * item.quantity) - item.discount).toFixed(2)}
                         </td>
                         <td>
                           <button 
@@ -413,7 +423,9 @@ const AddOrder = () => {
           {/* Form Actions */}
           <div className={styles.formActions}>
             <button type="submit" className={styles.submitBtn}>
-              {formData.status === 'Draft' ? 'Save Draft' : 'Confirm Order'}
+              
+              {loading ? <div className={styles.loadingButton}> <ButtonLoader /> &nbsp; Confirm Order</div> : 
+              <>{formData.status === 'Draft' ? 'Save Draft' : 'Confirm Order'}</>}
             </button>
           </div>
         </form>
