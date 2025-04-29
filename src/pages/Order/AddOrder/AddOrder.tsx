@@ -1,21 +1,8 @@
 import { useState, useEffect } from 'react';
 import styles from './AddOrder.module.css';
+import { useGetProductsQuery } from '../../../app/features/productSlice';
+import { useGetCustomersQuery } from '../../../app/features/customerService';
 
-// Mock product data
-const mockProducts = [
-  { id: 1, title: 'Floral Tea Cup Set', price: 1299, discount: 10, 
-    image: 'https://images.pexels.com/photos/31459351/pexels-photo-31459351/free-photo-of-romantic-embrace-on-rooftop-under-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-   },
-  { id: 2, title: 'Porcelain Dinner Plate', price: 599, discount: 5, 
-    image: 'https://images.pexels.com/photos/31459351/pexels-photo-31459351/free-photo-of-romantic-embrace-on-rooftop-under-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-  },
-  { id: 3, title: 'Glass Water Jug', price: 899, discount: 15, 
-    image: 'https://images.pexels.com/photos/31459351/pexels-photo-31459351/free-photo-of-romantic-embrace-on-rooftop-under-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-  },
-  { id: 4, title: 'Bamboo Serving Tray', price: 799, discount: 0, 
-    image: 'https://images.pexels.com/photos/31459351/pexels-photo-31459351/free-photo-of-romantic-embrace-on-rooftop-under-blue-sky.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-  },
-];
 
 const AddOrder = () => {
   const [formData, setFormData] = useState({
@@ -28,18 +15,53 @@ const AddOrder = () => {
     items: [],
   });
 
+
+  const { data, error, isLoading } = useGetProductsQuery();
+  const { data: customers, isLoading: loadingCustomers, isError: errorCustomers, refetch } = useGetCustomersQuery();
   const [searchTerm, setSearchTerm] = useState('');
+  const [customerSearchTerm, setCustomerSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [searchCustomerResults, setSearchCustomerResults] = useState([]);
+  const [showCustomerSearchResults, setShowCustomerSearchResults] = useState(false);
+
+  // --------------- Customer Filter Section -----------------
+
+  const handleSearchCustomer = (e) => {
+    const value = e.target.value;
+    setCustomerSearchTerm(value);
+  
+    if (!value.trim()) {
+      setSearchCustomerResults([]);
+      setShowCustomerSearchResults(false);
+      return;
+    }
+  
+    const results = customers?.data?.filter(customer =>
+      customer.code?.toLowerCase().includes(value.toLowerCase()) ||
+      customer.name?.toLowerCase().includes(value.toLowerCase())
+    );  
+    setSearchCustomerResults(results || []);
+    setShowCustomerSearchResults(true);
+  };
+
+  const selectCustomer = (customer) => {
+    setFormData(prev => ({
+      ...prev,
+      customer_code: customer.code,
+      customer_name: customer.name,
+      mobile: customer.mobile,
+      address: customer.address,
+      district: customer.district,
+    }));
+  
+    setCustomerSearchTerm(customer.code); // optional: show code in input
+    setShowCustomerSearchResults(false);
+  };  
+  // --------------- Customer Filter Section End -----------------
+
+
 
   // Calculate order summary
   const [summary, setSummary] = useState({
@@ -50,11 +72,9 @@ const AddOrder = () => {
 
   useEffect(() => {
     const subTotal = formData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const totalDiscount = formData.items.reduce((sum, item) => {
-      const itemDiscount = (item.price * item.discount * item.quantity) / 100;
-      return sum + itemDiscount;
-    }, 0);
+    const totalDiscount = formData.items.reduce((sum, item) => sum + Number(item?.discount), 0);
     
+    console.log("dddd", totalDiscount)
     setSummary({
       subTotal,
       totalDiscount,
@@ -72,9 +92,9 @@ const AddOrder = () => {
     setSearchTerm(term);
     
     if (term.length > 0) {
-      const results = mockProducts.filter(product =>
-        product.title.toLowerCase().includes(term.toLowerCase())
-      );
+      const results = data?.data.filter(product => {        
+        return product.name.toLowerCase().includes(term.toLowerCase())     
+        });        
       setSearchResults(results);
       setShowSearchResults(true);
     } else {
@@ -84,16 +104,16 @@ const AddOrder = () => {
   };
 
   const addProduct = (product) => {
-    const existingItemIndex = formData.items.findIndex(item => item.id === product.id);
-    
+    const existingItemIndex = formData.items.findIndex(item => item._id === product._id);    
     if (existingItemIndex >= 0) {
       const updatedItems = [...formData.items];
       updatedItems[existingItemIndex].quantity += 1;
+      
       setFormData(prev => ({ ...prev, items: updatedItems }));
     } else {
       setFormData(prev => ({
         ...prev,
-        items: [...prev.items, { ...product, quantity: 1 }]
+        items: [...prev.items, { ...product, quantity: 1}]
       }));
     }
     
@@ -102,6 +122,7 @@ const AddOrder = () => {
     setShowSearchResults(false);
   };
 
+
   const updateQuantity = (index, newQuantity) => {
     if (newQuantity < 1) return;
     
@@ -109,6 +130,13 @@ const AddOrder = () => {
     updatedItems[index].quantity = newQuantity;
     setFormData(prev => ({ ...prev, items: updatedItems }));
   };
+
+  const updateDiscount = (value, id) =>{    
+    const existingItemIndex = formData.items.findIndex(item => item._id === id);           
+    
+    const updateProduct = formData.items.map((item, index)=>index === existingItemIndex ? {...item, discount: value}: item);
+    setFormData(prev => ({ ...prev, items: updateProduct }));    
+  }
 
   const removeItem = (index) => {
     const updatedItems = formData.items.filter((_, i) => i !== index);
@@ -130,21 +158,21 @@ const AddOrder = () => {
         
         <form onSubmit={handleSubmit}>
           {/* Customer Information */}
-          <div className={styles.section}>
+          <div className={`${styles.section} ${styles.searchContainer}`}>
             <h3 className={styles.sectionTitle}>Customer Information</h3>
             <div className={styles.doubleInput}>
             <div >
               <label htmlFor="customer_code">Customer Code*</label>
               <input
-                type="text"
-                id="customer_code"
-                name="customer_code"
-                value={formData.customer_code}
-                onChange={handleInputChange}
-                placeholder="Enter customer code"
-                className={styles.input}
-                required
-              />
+              type="text"
+              id="customer_code"
+              name="customer_code"
+              value={customerSearchTerm}
+              onChange={handleSearchCustomer}
+              placeholder="Enter customer code or name"
+              className={styles.input}
+              required
+/>
             </div>
             <div >
               <label htmlFor="name">Customer Name*</label>
@@ -153,12 +181,38 @@ const AddOrder = () => {
                 id="customer_name"
                 name="customer_name"
                 value={formData.customer_name}
-                onChange={handleInputChange}
+                onChange={handleSearchCustomer}
                 placeholder="Enter customer name"
                 className={styles.input}
                 required
               />
             </div>
+                        
+                 {showCustomerSearchResults && (
+  <div className={styles.customerResults}>
+    {searchCustomerResults.length > 0 ? (
+      searchCustomerResults.map((customer) => (
+        <div 
+          key={customer._id} 
+          className={styles.productResult}
+          onClick={() => selectCustomer(customer)}
+        >
+          <img 
+                          src={customer.photo ??"src\assets\profile.jpg"} 
+                          alt={customer.name} 
+                          className={styles.productImage}
+                        />
+          <div className={styles.productInfo}>
+            <h4>{customer.name} ({customer.code})</h4>
+            <p>{customer.mobile} | {customer.district}</p>
+          </div>
+        </div>
+      ))
+    ) : (
+      <div className={styles.noResults}>No customers found</div>
+    )}
+  </div>
+)}
               </div>
            
               <div className={styles.doubleInput}>
@@ -247,11 +301,11 @@ const AddOrder = () => {
                       >
                         <img 
                           src={product.image} 
-                          alt={product.title} 
+                          alt={product.name} 
                           className={styles.productImage}
                         />
                         <div className={styles.productInfo}>
-                          <h4>{product.title}</h4>
+                          <h4>{product.name}</h4>
                           <p>₹{product.price} ({product.discount}% off)</p>
                         </div>
                       </div>
@@ -285,14 +339,14 @@ const AddOrder = () => {
                           <td className={styles.productCell}>
                             <img 
                               src={item.image} 
-                              alt={item.title} 
+                              alt={item.name} 
                               className={styles.itemImage}
                             />
-                            <span>{item.title}</span>
+                            <span>{item.name}</span>
                           </td>                        
                        <td>{item.unit}</td>
                        <td>{item.price}</td>
-                       <td><input className={styles.discountInput} value={item.discount ?? 0} type="text" placeholder='Discount'/></td>
+                       <td><input onChange={(e)=>updateDiscount(e.target.value, item?._id)} className={styles.discountInput} defaultValue={0} type="text" placeholder='0'/></td>
                         <td>
                           <div className={styles.quantityControl}>
                             <button 
@@ -328,56 +382,7 @@ const AddOrder = () => {
                       </tr>
                     ))}
                   </tbody>
-                </table>
-
-                {/* {isMobile && formData.items.map((item, index) => (
-                  <div key={`mobile-${index}`} className={styles.mobileItemCard}>
-                    <div className={styles.mobileItemHeader}>
-                      <img 
-                        src={item.image} 
-                        alt={item.title} 
-                        className={styles.mobileItemImage}
-                      />
-                      <div>
-                        <h4>{item.title}</h4>
-                        <p>₹{item.price} ({item.discount}% off)</p>
-                      </div>
-                    </div>
-                    <div className={styles.mobileItemDetails}>
-                      <div className={styles.mobileQuantityControl}>
-                        <span>Quantity:</span>
-                        <div className={styles.quantityControl}>
-                          <button 
-                            type="button" 
-                            onClick={() => updateQuantity(index, item.quantity - 1)}
-                            className={styles.quantityBtn}
-                          >
-                            -
-                          </button>
-                          <span>{item.quantity}</span>
-                          <button 
-                            type="button" 
-                            onClick={() => updateQuantity(index, item.quantity + 1)}
-                            className={styles.quantityBtn}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                      <div className={styles.mobileItemAmount}>
-                        <span>Amount:</span>
-                        <span>₹{((item.price * item.quantity) * (100 - item.discount) / 100).toFixed(2)}</span>
-                      </div>
-                      <button 
-                        type="button" 
-                        onClick={() => removeItem(index)}
-                        className={styles.mobileRemoveBtn}
-                      >
-                        Remove Item
-                      </button>
-                    </div>
-                  </div>
-                ))} */}
+                </table>               
               </div>
             ) : (
               <div className={styles.emptyCart}>

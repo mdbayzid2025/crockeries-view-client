@@ -13,7 +13,8 @@ const tabs = [
 ]
 
 const Order = () => {
-    const [selected, setSelectTab] = useState('Ladger Order')
+    const [selected, setSelectTab] = useState('Ladger Order');
+    
 
   return (
     <div>

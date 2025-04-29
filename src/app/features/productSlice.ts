@@ -1,12 +1,8 @@
 // features/customers/customerService.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { apiSlice } from "../api/apiSlice";
+import { apiSlice } from '../api/apiSlice';
 
-export const productApiSlice = createApi({
-  reducerPath: 'productApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/v1/products' }),
-  tagTypes: ['Products'],
+export const productApiSlice = apiSlice.enhanceEndpoints({addTagTypes: ['Products']}).injectEndpoints({
   endpoints: builder  => ({
     getProducts: builder.query({
       query: ()=> 'products',
@@ -14,14 +10,15 @@ export const productApiSlice = createApi({
     }),
 
     getSingleProduct: builder.query({
-      query: (id)=> `product/${id}`
+      query: (id)=> `products/${id}`
     }),
     updateProduct: builder.mutation({
       query: ({id, ...rest})=>({
         url: `products/${id}`,
         method: "PUT",
         body: rest,
-      })
+      }),
+      providesTags: ['Products']
     }),
     deleteProduct: builder.mutation({
       query: (id)=>({
@@ -32,7 +29,7 @@ export const productApiSlice = createApi({
     }),
     addProduct: builder.mutation({
       query: (body)=>({
-        url: `products`,
+        url: `products/create`,
         method: "POST",
         body,
       }),

@@ -5,7 +5,7 @@ import styles from './AllProductsHeader.module.css'
 const AllProductsHeader = ({selected, setSelectTab}) => {
     const tabs = [
         'All Products',
-        'Add Product'
+        'Add Product',        
     ]
   return (
     <div>

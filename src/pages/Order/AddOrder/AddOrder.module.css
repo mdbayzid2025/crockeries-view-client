@@ -311,7 +311,7 @@
 
 
   .discountInput{
-    width: 50px;
+    width: 100px;
     padding: 0.75rem 1rem;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -319,6 +319,7 @@
     color: #1e293b;
     font-size: 0.9375rem;
     transition: all 0.2s ease;
+    text-align: center;
   }
 
 
@@ -331,5 +332,31 @@
     }
     .section{
       padding: 0.5rem;
+    }
+  }
+
+  .customerResults{
+    position: absolute;
+    width: 50%;
+    top: 50%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    margin-top: 0.5rem;
+  }
+
+  @media(max-width: 768px){
+    .customerResults{
+      width: 80%;
+    }
+  }
+  @media(min-width: 768px){
+    .customerResults{
+      width: 50%;
+      left: 25px;;
     }
   }

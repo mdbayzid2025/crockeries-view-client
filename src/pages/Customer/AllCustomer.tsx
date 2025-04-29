@@ -10,7 +10,9 @@ import { useGetCustomersQuery } from '../../app/features/customerService';
 
 const AllCustomer = () => { 
  const {data: result, isLoading, isError, error, refetch } = useGetCustomersQuery()
- const {data: categories, isLoading:loading  } = useGetCategoriesQuery()
+ const {data: categories, isLoading:loading  } = useGetCategoriesQuery();
+ 
+
 
  if (isLoading) return <div>Loading...</div>;
  if (isError) {

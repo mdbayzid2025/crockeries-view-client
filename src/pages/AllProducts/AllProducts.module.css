@@ -9,7 +9,12 @@
     width: 100%;
     background: #fff;
     border-collapse: collapse;
-    
+    tr:last-child{
+      padding-bottom: 100px;
+      .menu{
+        bottom: 30px;;
+      }
+    }
     th{
         font-size: 14px;
     font-weight: 600;
@@ -158,3 +163,65 @@ background-color: #F3F4F6;
   }
 }
 
+.notFound{
+  font-size: 16px;
+  font-weight: 600;
+  color: brown;
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.menuContainer{
+  position: relative;  
+  button{
+    background: none;
+    outline: none;
+    border: none;
+  }
+}
+.menu {
+  position: absolute;
+  width: 150px;
+  right: 30px;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 10;  
+}
+
+.downward {
+  top: calc(100% + 8px);
+}
+
+.upward {
+  bottom: calc(100% + 8px);
+}
+
+.menuItem {
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background-color: #f3f4f6;
+}
+
+.menu{
+  a{
+    text-decoration: none;
+    color: black;
+    &:hover {
+      background-color: #333;
+    }
+  }
+}
