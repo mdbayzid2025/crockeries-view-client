@@ -5,9 +5,12 @@ import { apiSlice } from '../api/apiSlice';
 export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
-      query: () => '/orders',
+      query: (status) => ({
+        url: '/orders',
+        params: { status }, // Pass status as query parameter
+      }),
       providesTags: ['Order'],
-    }),
+    }),   
     getOrderById: builder.query({
       query: (id) => `orders/${id}`,
       providesTags: (result, error, id) => [{ type: 'Order', id }],

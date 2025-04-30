@@ -7,16 +7,17 @@ import useConfirmationModal from '../../../hooks/useConfirmationModal';
 import ConfirmationModal from '../../../components/Shared/ConfirmationModal';
 import { useDeleteBrandMutation } from '../../../app/features/categorySlice';
 
-const AllOrder = () => {
-  const { data, isLoading, isError } = useGetOrdersQuery();
+const AllOrder = ({status}) => {
+  const { data, isLoading, isError } = useGetOrdersQuery(status);
   const [orders, setOrders] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useConfirmationModal()
   const[deleteOrder, {isLoading: orderDeleting}] = useDeleteOrderMutation()
 
   useEffect(() => {
-    if (data?.data) {
-      setOrders(data.data);
+  
+    if (data) {      
+      setOrders(data);
     }
   }, [data]);
 

@@ -7,21 +7,21 @@ import styles from './Order.module.css';
 
 
 const tabs = [
-    'Ladger Order',
-    'Rough Order',
+    'ladger',
+    'rough',
     'Add Order',    
 ]
 
 const Order = () => {
-    const [selected, setSelectTab] = useState('Ladger Order');
+    const [selected, setSelectTab] = useState('ladger');
     
 
   return (
     <div>
         <TabHeader tabs={tabs} selected={selected} setSelectTab={setSelectTab}/>
         <div className={styles.content}>
-        {selected === 'Ladger Order' && <AllOrder />}
-        {selected === 'Rough Order' && <DraftOrder />}
+        {selected === 'ladger' && <AllOrder status={selected} />}
+        {selected === 'rough' && <DraftOrder status={selected} />}
         {selected === 'Add Order' && <AddOrder setSelectTab={setSelectTab}/>}
         </div>
         
