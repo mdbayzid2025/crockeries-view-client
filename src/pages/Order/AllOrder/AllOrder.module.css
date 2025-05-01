@@ -336,3 +336,66 @@ background-color: #F3F4F6;
   color: #4f46e5;
 }
 
+.emptyOrderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  color: #5f6368;
+  h2 {
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    color: #202124;
+    font-size: 22px;
+  }
+  
+  p {
+    margin: 0 0 30px 0;
+    line-height: 1.5;
+    font-size: 15px;
+    max-width: 350px;
+  }
+}
+
+.emptyIllustration {
+  width: 300px;
+  height: 200px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+
+
+
+.addOrderBtn {
+  padding: 12px 24px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.addOrderBtn:hover {
+  background-color: #1765cc;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.attribution {
+  margin-top: 40px;
+  font-size: 12px;
+  color: #9aa0a6;
+}
+
+.attribution a {
+  color: #1a73e8;
+  text-decoration: none;
+}

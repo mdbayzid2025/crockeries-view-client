@@ -217,6 +217,7 @@ background-color: #F3F4F6;
 }
 
 .menu{
+  padding-block: 10px;
   a{
     text-decoration: none;
     color: black;
@@ -224,4 +225,12 @@ background-color: #F3F4F6;
       background-color: #333;
     }
   }
+}
+
+.closeIcon{
+  position: absolute;
+    top: 8px;
+    right: 8px;
+    color: red;
+    cursor: pointer;
 }

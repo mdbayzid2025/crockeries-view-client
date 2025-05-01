@@ -153,10 +153,13 @@ const UpdateOrder = () => {
 
   // Update product discount
   const updateDiscount = (value, id) => {    
-    const existingItemIndex = formData.order_items.findIndex(item => item._id === id);           
+    const existingItemIndex = formData.order_items.findIndex(item => item._id === id);    
+    
+    // Optionally: Remove leading zero if present       
+    const cleanValue = value.replace(/^0+(?=\d)/, '');
     
     const updateProduct = formData.order_items.map((item, index) => 
-      index === existingItemIndex ? {...item, discount: value || 0} : item
+      index === existingItemIndex ? {...item, discount: cleanValue || 0} : item
     );
     setFormData(prev => ({ ...prev, order_items: updateProduct }));    
   }
@@ -391,10 +394,11 @@ const UpdateOrder = () => {
                           <input 
                             onChange={(e) => updateDiscount(e.target.value, item?._id)} 
                             className={styles.discountInput} 
-                            value={item.discount || 0} 
-                            type="text" 
-                            placeholder='0'
-                          />
+                            value={item.discount} 
+                            type="number" 
+                            min={0}
+                            placeholder=''
+                          />                          
                         </td>
                         <td>
                           <div className={styles.quantityControl}>

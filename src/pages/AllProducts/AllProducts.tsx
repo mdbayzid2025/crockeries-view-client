@@ -11,6 +11,8 @@ import useConfirmationModal from "../../hooks/useConfirmationModal";
 import ConfirmationModal from "../../components/Shared/ConfirmationModal";
 import UpdateProduct from "./UpdateProduct";
 import { Link } from "react-router-dom";
+import { BiCross } from "react-icons/bi";
+import { IoIosClose, IoMdClose } from "react-icons/io";
 
 const img = "https://api.bongodeshi.com/api/upload/images/2-e822dae0-14df-4cb8-b145-ea4dc0966b34-0517.webp";
 
@@ -85,6 +87,7 @@ const handleDelete = async (id: string) => {
       const result = await deleteProduct(id);  
 
       console.log("delete r", result)
+      setOpenMenu(!openMenu)
     } catch (error) {
       console.log('Item deleted:', error);
     }        
@@ -148,6 +151,8 @@ const handleDelete = async (id: string) => {
                 <div ref={menuRef} className={`${styles.menu}`}>
                     <Link to={`/product/${data?._id}`}><div  className={styles.menuItem}>Edit</div></Link>
                     <div className={styles.menuItem} onClick={() => handleDelete(data?._id)} >Delete</div>
+                
+                <span className={styles.closeIcon} onClick={()=>setOpenMenu(!openMenu)}><IoMdClose  size={20}/></span>
                 </div>
             )}       
         </td>      

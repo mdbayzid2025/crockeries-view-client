@@ -7,13 +7,14 @@
     padding: 10px 14px;
     background: var(--sidebar-color);
     transition: var(--tran-05);
-    z-index: 100;    
+    z-index: 0;    
   }
 
   @media (max-width: 768px){
     .sidebar{
       /* display: none; */
       width: 98%;
+      z-index: 100;    
     }
     .hide{
       left: -100%;

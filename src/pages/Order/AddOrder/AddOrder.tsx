@@ -137,8 +137,10 @@ const AddOrder = ({setSelectTab}) => {
 
   const updateDiscount = (value, id) =>{    
     const existingItemIndex = formData.items.findIndex(item => item._id === id);           
+    // Optionally: Remove leading zero if present       
+    const cleanValue = value.replace(/^0+(?=\d)/, '');
     
-    const updateProduct = formData.items.map((item, index)=>index === existingItemIndex ? {...item, discount: value}: item);
+    const updateProduct = formData.items.map((item, index)=>index === existingItemIndex ? {...item, discount: cleanValue}: item);
     setFormData(prev => ({ ...prev, items: updateProduct }));    
   }
 
@@ -155,7 +157,7 @@ const AddOrder = ({setSelectTab}) => {
     const result = await createOrder(formData)
     console.log(result);
     setLoading(false);
-    setSelectTab("Ladger Order")
+    setSelectTab("ladger")
    } catch (error) {
     console.log(error?.message)
    }    
@@ -356,7 +358,7 @@ const AddOrder = ({setSelectTab}) => {
                           </td>                        
                        <td>{item.unit}</td>
                        <td>{item.price}</td>
-                       <td><input onChange={(e)=>updateDiscount(e.target.value, item?._id)} className={styles.discountInput} defaultValue={0} type="text" placeholder='0'/></td>
+                       <td><input onChange={(e)=>updateDiscount(e.target.value, item?._id)} className={styles.discountInput} defaultValue={0} type="text" placeholder='Discount'/></td>
                         <td>
                           <div className={styles.quantityControl}>
                             <button 

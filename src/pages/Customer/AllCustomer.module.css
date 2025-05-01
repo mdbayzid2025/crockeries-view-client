@@ -33,6 +33,7 @@
     padding-left: 20px;
   }
   
+  
   /* Placeholder animation when not focused */
   @keyframes slidePlaceholder {
     0% {

@@ -1,14 +1,44 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './invoice.module.css';
 import { useReactToPrint } from 'react-to-print';
+import { useGetOrderByIdQuery } from '../../app/features/orderService';
+import { useParams } from 'react-router-dom';
+
+
+const siteInfo = {
+  name: "Crockeries View",
+  email: "abc@gmail.com",
+  address: "Baitul Mukarram, Dhaka-1000",
+  reg_no: "001235054-0208",
+  district: "Dhaka",
+  mobile: "01619788808",  
+}
+const sellerName = {
+  sellerName: "Johirul",
+  invoice_type: "Credit"
+}
 
 const Invoice = () => {
+  const { id } = useParams();
+  const { data: orderData, isLoading: orderLoading, isError: orderError } = useGetOrderByIdQuery(id);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [ordersInfo, setOrdersInfo] = useState(null)
 const reactToPrintFn = useReactToPrint({ contentRef });
 
-  const handlePrint = () => {
-    window.print();
-  };
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const year = date.getFullYear().toString().slice(-2);
+  return `${day}-${month}-${year}`;
+};
+
+useEffect(()=>{
+if(orderData){
+  setOrdersInfo(orderData?.data)
+}
+},[orderData])
 
   return (
     <div className={styles.invoiceContainer} ref={contentRef}>
@@ -34,20 +64,28 @@ const reactToPrintFn = useReactToPrint({ contentRef });
                   <div className={`${styles.textSm} `}>
                     <table className={`${styles.borderCollapse} ${styles.timeSection} ${styles.borderSpacing0} ${styles.invoiceTable}`}>
                       <tbody>
-                        <tr>
+                      {orderData?.data && <tr>
                           <td className={`${styles.borderR} ${styles.pr4}`}>
                             <div>
                               <p className={`${styles.whitespaceNowrap} ${styles.textSlate400} ${styles.textRight}`}>Date</p>
-                              <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>April 26, 2023</p>
+                              <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>
+                              {formatDate(orderData?.data.created_at)}
+                              </p>
                             </div>
                           </td>
                           <td className={styles.pl4}>
                             <div>
                               <p className={`${styles.whitespaceNowrap} ${styles.textSlate400} ${styles.textRight}`}>Invoice #</p>
-                              <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>BRA-00335</p>
+                              <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>{orderData?.data?.invoice_no}</p>
                             </div>
                           </td>
-                        </tr>
+                          <td className={styles.pl4}>
+                            <div>
+                              <p className={`${styles.whitespaceNowrap} ${styles.textSlate400} ${styles.textRight}`}>Invoice #</p>
+                              <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>{orderData?.data?.invoice_no}</p>
+                            </div>
+                          </td>
+                        </tr>}
                       </tbody>
                     </table>
                   </div>
@@ -61,28 +99,25 @@ const reactToPrintFn = useReactToPrint({ contentRef });
         <div className={` ${styles.py6} ${styles.textSm} ${styles.addressContainer}`}>
           <table className={` ${styles.bgSlate100} ${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <tbody>
-              <tr>
+              {orderData?.data && <tr>
                 <td className={`${styles.wHalf} ${styles.alignTop}`}>
                   <div className={`${styles.textSm} ${styles.textNeutral600}`}>
-                    <p className={styles.fontBold}>Supplier Company INC</p>
-                    <p>Number: 23456789</p>
-                    <p>VAT: 23456789</p>
-                    <p>6622 Abshire Mills</p>
-                    <p>Port Orlofurt, 05820</p>
-                    <p>United States</p>
+                    <p className={styles.fontBold}>{orderData?.data?.customer_name}</p>
+                    <p>Code: {orderData?.data?.customer_code}</p>
+                    <p>Mobile: {orderData?.data?.mobile}</p>
+                    <p>{orderData?.data?.address}</p>
+                    <p>{orderData?.data?.district}</p>                    
                   </div>
                 </td>
                 <td className={`${styles.wHalf} ${styles.alignTop} ${styles.textRight}`}>
                   <div className={`${styles.textSm} ${styles.textNeutral600}`}>
-                    <p className={styles.fontBold}>Customer Company</p>
-                    <p>Number: 123456789</p>
-                    <p>VAT: 23456789</p>
-                    <p>9552 Vandervort Spurs</p>
-                    <p>Paradise, 43325</p>
-                    <p>United States</p>
+                    <p className={styles.fontBold}>{siteInfo?.name}</p>                    
+                    <p>VAT: {siteInfo?.reg_no}</p>                    
+                    <p>Mobile: {siteInfo?.mobile}</p>
+                    <p>{siteInfo?.address} {siteInfo?.district}.</p>
                   </div>
                 </td>
-              </tr>
+              </tr>}
             </tbody>
           </table>
         </div>
@@ -91,45 +126,32 @@ const reactToPrintFn = useReactToPrint({ contentRef });
           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.productsTable}`}>
             <thead>
               <tr>
-                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl3} ${styles.fontBold} ${styles.textMain}`}>#</td>
-                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.fontBold} ${styles.textMain}`}>Product details</td>
-                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Price</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl3} ${styles.fontBold} ${styles.textMain}`}>Sl No</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl3} ${styles.fontBold} ${styles.textMain}`}>Item Code</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.fontBold} ${styles.textMain}`}>Item Name</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Brand</td>
                 <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textCenter} ${styles.fontBold} ${styles.textMain}`}>Qty.</td>
-                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textCenter} ${styles.fontBold} ${styles.textMain}`}>VAT</td>
-                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Subtotal</td>
-                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.pr3} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Subtotal + VAT</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textCenter} ${styles.fontBold} ${styles.textMain}`}>Unit</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Price</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Discount</td>
+                <td className={`${styles.borderB2} ${styles.borderMain} ${styles.pb3} ${styles.pl2} ${styles.pr3} ${styles.textRight} ${styles.fontBold} ${styles.textMain}`}>Amount</td>
               </tr>
             </thead>
             <tbody>
+              {ordersInfo?.order_items && ordersInfo?.order_items.map((item, index)=>
+              <tr key={index}>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl3}`}>{index + 1}.</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2}`}>{item?.code}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>{item?.name}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>{item?.brand}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>{item?.quantity}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} `}>{item?.unit}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.price}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.discount}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.total}</td>
+              </tr>)}             
               <tr>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl3}`}>1.</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2}`}>Montly accountinc services</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>$150.00</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>1</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>20%</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>$150.00</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} ${styles.textRight}`}>$180.00</td>
-              </tr>
-              <tr>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl3}`}>2.</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2}`}>Taxation consulting (hour)</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>$60.00</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>2</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>20%</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>$120.00</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} ${styles.textRight}`}>$144.00</td>
-              </tr>
-              <tr>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl3}`}>3.</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2}`}>Bookkeeping services</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>$50.00</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>1</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>20%</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textRight}`}>$50.00</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} ${styles.textRight}`}>$60.00</td>
-              </tr>
-              <tr>
-                <td colSpan="7">
+                <td colSpan="9">
                   <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.summaryTable}`}>
                     <tbody>
                       <tr>
@@ -173,25 +195,30 @@ const reactToPrintFn = useReactToPrint({ contentRef });
           </table>
         </div>
 
-        <div className={`${styles.px14} ${styles.textSm} ${styles.textNeutral700}`}>
-          <p className={`${styles.textMain} ${styles.fontBold}`}>PAYMENT DETAILS</p>
-          <p>Banks of Banks</p>
-          <p>Bank/Sort Code: 1234567</p>
-          <p>Account Number: 123456678</p>
-          <p>Payment Reference: BRA-00335</p>
-        </div>
+      
 
-        <div className={`${styles.px14} ${styles.py10} ${styles.textSm} ${styles.textNeutral700}`}>
+        <div className={`${styles.footerContainer} ${styles.px14} ${styles.textSm} ${styles.textNeutral700}`}>
+          <div className={`${styles.footerLeft}`}>
+                <p>Authorized By</p>
+          </div>
+          <div className={styles.footerRight}>
+                <p>Received By</p>
+          </div>
+        </div>
+        
+        {/* <div className={`${styles.px14} ${styles.py10} ${styles.textSm} ${styles.textNeutral700}`}>
           <p className={`${styles.textMain} ${styles.fontBold}`}>Notes</p>
           <p className={styles.italic}>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
-        </div>
+        </div> */}
 
         <footer className={`${styles.fixed} ${styles.bottom0} ${styles.left0} ${styles.bgSlate100} ${styles.wFull} ${styles.textNeutral600} ${styles.textCenter} ${styles.textXs} ${styles.py3}`}>
-          Supplier Company
+        {siteInfo?.name}
           <span className={`${styles.textSlate300} ${styles.px2}`}>|</span>
-          info@company.com
+          {siteInfo?.email}
           <span className={`${styles.textSlate300} ${styles.px2}`}>|</span>
-          +1-202-555-0106
+          {siteInfo?.mobile}
+          <span className={`${styles.textSlate300} ${styles.px2}`}>|</span>
+          {siteInfo?.address} {siteInfo?.district}
         </footer>
       </div>
     </div>

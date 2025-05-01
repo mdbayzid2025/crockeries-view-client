@@ -9,7 +9,7 @@ export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']})
       providesTags: ['Customer'],
     }),
     getCustomerById: builder.query({
-      query: (id) => `/${id}`,
+      query: (id) => `customers/${id}`,
       providesTags: (result, error, id) => [{ type: 'Customer', id }],
     }),
     addCustomer: builder.mutation({
@@ -22,7 +22,7 @@ export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']})
     }),
     updateCustomer: builder.mutation({
       query: ({ id, ...customerData }) => ({
-        url: `/${id}`,
+        url: `customers/${id}`,
         method: 'PUT',
         body: customerData,
       }),
@@ -30,7 +30,7 @@ export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']})
     }),
     deleteCustomer: builder.mutation({
       query: (id) => ({
-        url: `/${id}`,
+        url: `customers/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Customer'],

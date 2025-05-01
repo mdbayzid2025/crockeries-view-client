@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './DraftOrder.module.css';
 import { CiSearch } from "react-icons/ci";
-import { useDeleteOrderMutation, useGetOrdersQuery } from '../../../app/features/orderService';
+import { useDeleteOrderMutation, useGetOrdersQuery, useUpdateOrderMutation, useUpdateOrderStatusMutation } from '../../../app/features/orderService';
 import { Link } from 'react-router-dom';
 import useConfirmationModal from '../../../hooks/useConfirmationModal';
 import ConfirmationModal from '../../../components/Shared/ConfirmationModal';
@@ -13,16 +13,24 @@ const DraftOrder = ({status}) => {
   const [openModal, setOpenModal] = useState(false);
   const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useConfirmationModal()
   const[deleteOrder, {isLoading: orderDeleting}] = useDeleteOrderMutation()
+  const [updateOrderStatus, {isLoading:updateStatus}]= useUpdateOrderStatusMutation();
+  const [loading, setLoading] = useState(false);
+  
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (data) {
-      setOrders(data);
+      setOrders(data?.data);
     }
   }, [data]);
 
   if (isLoading) return <p>Loading orders...</p>;
   if (isError) return <p>Failed to load orders.</p>;
 
+  // Filter
+  const filteredOrders = orders.filter((order) =>
+    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // ---------- Handle Delete ------------
 const handleDelete = async (id: string) => {
@@ -35,13 +43,31 @@ const handleDelete = async (id: string) => {
     if (shouldDelete) {
       // Perform delete action
       try {
+        setLoading(true)
         const result = await deleteOrder(id);  
   
         console.log("delete r", result)
+        setLoading(false)
       } catch (error) {
         console.log('Item deleted:', error);
       }        
       }
+  };
+
+
+  // Update Order Status
+
+   // ---------- Handle Delete ------------
+   const handleUpdateStatus = async (id: string, e: any) => {
+    try {
+      const status = e.target.value;  
+      // Call the update order status function with the selected status and orderId
+      const result = await updateOrderStatus({ id, status });
+  
+      console.log("Update result:", result);
+    } catch (error) {
+      console.log("Error updating status:", error);
+    }
   };
 
   return (
@@ -53,11 +79,12 @@ const handleDelete = async (id: string) => {
             type="text"
             placeholder="Search by Order Number.."
             className={styles.input}
+            onChange={(e)=>setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      {orders?.length > 0 ?  orders.map((order, index) => (
+      {filteredOrders?.length > 0 ?  filteredOrders.map((order, index) => (
         <div key={index}>
           {/* -------- Order Header -------- */}
           <div className={styles.orderHeader}>
@@ -79,7 +106,7 @@ const handleDelete = async (id: string) => {
               <h3>Order No : {order._id.slice(-5).toUpperCase()}</h3>
               <div className={styles.statusContainer}>
                 <p className={styles.status}>Status: <span>{order.status}</span></p>
-                <select name="status" defaultValue="change">
+                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue={order.status}>
                   <option disabled value="change">Change</option>
                   <option value="rough">Rough</option>
                   <option value="ladger">Ladger</option>
