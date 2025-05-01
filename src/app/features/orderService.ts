@@ -11,6 +11,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
       }),
       providesTags: ['Order'],
     }),   
+
     getOrderById: builder.query({
       query: (id) => `orders/${id}`,
       providesTags: (result, error, id) => [{ type: 'Order', id }],
@@ -23,6 +24,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
       }),
       invalidatesTags: ['Order'],
     }),
+
     updateOrder: builder.mutation({
       query: ({ id, ...orderData }) => ({
         url: `orders/${id}`,
@@ -30,6 +32,14 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
         body: orderData,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Order', id }],
+    }),
+    updateOrderStatus: builder.mutation({
+      query: ({ id, ...status }) => ({
+        url: `orders/${id}/status`,
+        method: 'PUT',
+        body: status,
+      }),
+      invalidatesTags: ['Order'],
     }),
     deleteOrder: builder.mutation({
       query: (id) => ({
@@ -45,6 +55,8 @@ export const {
   useGetOrdersQuery,
   useGetOrderByIdQuery,
   useCreateOrderMutation,
+  
   useUpdateOrderMutation,
+  useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
 } = orderApi;

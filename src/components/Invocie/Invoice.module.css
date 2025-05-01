@@ -142,6 +142,9 @@
     text-align: center;
   }
   
+  .textLeft {
+    text-align: left;
+  }
   .textRight {
     text-align: right;
   }
@@ -161,7 +164,9 @@
   }
   
   .fontBold {
+    padding-top: 15px;
     font-weight: 700;
+    font-size: 18px;
   }
   
   .italic {
@@ -392,4 +397,25 @@
   body {
     -webkit-print-color-adjust: exact;
   }
+}
+
+.footerContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  margin-top: auto;
+}
+
+.footerLeft {  
+  p{
+    border-top: 1px solid #000;
+    padding-inline: 18px;
+  } 
+}
+
+.footerRight {  
+  p{
+    border-top: 1px solid #000;
+    padding-inline: 18px;
+  } 
 }

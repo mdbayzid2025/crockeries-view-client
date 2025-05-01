@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import styles from './AllOrder.module.css';
 import { CiSearch } from "react-icons/ci";
-import { useDeleteOrderMutation, useGetOrdersQuery } from '../../../app/features/orderService';
+import { useDeleteOrderMutation, useGetOrdersQuery, useUpdateOrderStatusMutation } from '../../../app/features/orderService';
 import { Link } from 'react-router-dom';
 import useConfirmationModal from '../../../hooks/useConfirmationModal';
 import ConfirmationModal from '../../../components/Shared/ConfirmationModal';
-import { useDeleteBrandMutation } from '../../../app/features/categorySlice';
+import emptyImg  from "../../../assets/empty_order.jpg";
 
 const AllOrder = ({status}) => {
   const { data, isLoading, isError } = useGetOrdersQuery(status);
   const [orders, setOrders] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useConfirmationModal()
-  const[deleteOrder, {isLoading: orderDeleting}] = useDeleteOrderMutation()
+  const[deleteOrder, {isLoading: orderDeleting}] = useDeleteOrderMutation();
+  const [updateOrderStatus, {isLoading:updateStatus}]= useUpdateOrderStatusMutation();
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   useEffect(() => {
   
     if (data) {      
-      setOrders(data);
+      console.log("dddd", data);
+      setOrders(data?.data);
     }
   }, [data]);
 
+  // Filter data
+  const filteredOrders = orders.filter((order) =>
+    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   if (isLoading) return <p>Loading orders...</p>;
   if (isError) return <p>Failed to load orders.</p>;
 
@@ -45,6 +53,19 @@ const handleDelete = async (id: string) => {
       }
   };
 
+  // ---------- Handle Delete ------------
+  const handleUpdateStatus = async (id: string, e: any) => {
+    try {
+      const status = e.target.value;  
+      // Call the update order status function with the selected status and orderId
+      const result = await updateOrderStatus({ id, status });
+  
+      console.log("Update result:", result);
+    } catch (error) {
+      console.log("Error updating status:", error);
+    }
+  };
+
   return (
     <div>
       <div className={styles.container}>
@@ -54,11 +75,12 @@ const handleDelete = async (id: string) => {
             type="text"
             placeholder="Search by Order Number.."
             className={styles.input}
+            onChange={(e)=>setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      {orders.map((order, index) => (
+      {filteredOrders?.length > 0 ? filteredOrders.map((order, index) => (
         <div key={index}>
           {/* -------- Order Header -------- */}
           <div className={styles.orderHeader}>
@@ -77,10 +99,10 @@ const handleDelete = async (id: string) => {
               <a onClick={()=>handleDelete(order?._id)} className={styles.deleteButton}>{orderDeleting ? "Deleting" : "Delete"}</a>
               </div>
               
-              <h3>Order No : {order._id.slice(-5).toUpperCase()}</h3>
+              <h3>Order No : {order.invoice_no}</h3>
               <div className={styles.statusContainer}>
                 <p className={styles.status}>Status: <span>{order.status}</span></p>
-                <select name="status" defaultValue="change">
+                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue="change">
                   <option disabled value="change">Change</option>
                   <option value="rough">Rough</option>
                   <option value="ladger">Ladger</option>
@@ -146,7 +168,22 @@ const handleDelete = async (id: string) => {
             </table>
           </div>
         </div>
-      ))}      
+      )): 
+       <div className={styles.emptyOrderContainer}>
+              
+              <img 
+                  src={emptyImg} 
+                  alt="No orders illustration" 
+                  className={styles.emptyIllustration}/>
+              <h2>No Orders Yet</h2>
+              <p>When you create orders, they'll appear here. Get started by creating your first order.</p>
+              <button className={styles.addOrderBtn} >Create New Order</button>
+              
+              <div className={styles.attribution}>
+                  Illustration by <a href="https://www.freepik.com/" target="_blank">Freepik</a>
+              </div>
+          </div>
+      }      
                        <ConfirmationModal
                        isOpen={isOpen}
                        title={modalProps.title}
@@ -161,148 +198,3 @@ const handleDelete = async (id: string) => {
 };
 
 export default AllOrder;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useRef, useState } from 'react';
-// import styles from './AllOrder.module.css';
-// import { CiSearch } from "react-icons/ci";
-// import useOrderSummary from '../../../hooks/useOrderSummary';
-// import { useGetOrdersQuery } from '../../../app/features/orderService';
-
-// const AllOrder = () => {
-//     const [orders, setOrders] = useState([])
-//     const [items, setItems]= useState([])
-
-//     const { data, isLoading: loadingCustomers, isError: errorCustomers, refetch } = useGetOrdersQuery();
-//     const storedItem = localStorage.getItem('order') ? JSON.parse(localStorage.getItem('order')) : []
-
-//     useEffect(()=>{
-
-//         if(storedItem){
-//             console.log(storedItem)
-//             setItems(storedItem?.items);
-//             setOrders([storedItem])
-//         }
-//     },[])
-
-//     const summary = useOrderSummary(items);
-
-//     console.log('sssss', summary);
-//   return (
-//     <div>
-//         <div className={styles.container}>
-//       <div className={styles.searchBar}>
-//       <CiSearch size={25}/>
-//         <input
-//           type="text"
-//           placeholder="Search by Order Number.."
-//           className={styles.input}
-//         />
-//       </div>
-//     </div>
-
-// {orders && orders.map((order, index)=> 
-//     <div key={index}>
-// <div className={styles.orderHeader}>
-// <div className={styles.leftContant}>
-//     <p className={styles.customer}>{order?.customer_name} <span>({order?.customer_code})</span></p>
-//     <p>{order?.mobile}</p>
-//     <p>{order?.address}, {order?.district}</p>    
-// </div>
-
-// <div className={styles.rightContant}>
-// <a href="/invoice/1234" className={styles.printButton}>Print</a>
-
-// <h3>Order No : 1111  </h3>
-
-
-// <div className={styles.statusContainer}>
-// <p className={styles.status}>Status: <span>Rough Order</span></p>
-
-// <select name="" id="">
-//     <option disabled selected value="change">Change</option>
-//     <option value="rough">Rough</option> 
-//     <option value="ladger">Ladger</option>
-// </select>
-
-// </div>
-// <p>Order Date: 14 Fab 2025</p>
-// </div>    
-//   </div>
-// <div className={styles.pageTable}>
-//         <table>
-//         <tr className={styles.tableHeader}>
-//           <th className={styles.tableCheckbox}>
-//             Image
-//           </th>
-//           <th>Name</th>
-//           <th>Code</th>
-//           <th>Category</th>
-//           <th>Brand</th>
-//           <th>Unit</th>
-//           <th>price</th>                    
-//           <th>Discount</th>                    
-//           <th>Amuont</th>                    
-//         </tr>     
-        
-//         {items && items.map((data:any)=>
-//             <tr key={data._id}>                  
-//       <td>
-
-//         <img src="src\assets\profile.jpg" alt="image" className={styles.tableImage} />
-//       </td>      
-//       <td>{data?.name}</td>
-//       <td>{data?.code}</td>
-//       <td>{data?.category}</td>
-//       <td>{data?.brand}</td>
-//       <td>{data?.unit}</td>
-//       <td>{data?.price}</td>
-//       <td>{data?.discount}</td>
-//       <td>{data?.amount}</td>      
-//       </tr>)}
-//       <tr >
-//         {/* -------- Sub Total ---------- */}
-//         <td colSpan={9}>
-//         <div className={styles.wrapper} cols-span={9}>
-//             <div className={styles.itemRow}>
-//                 <p className={styles.label}>Subtotal</p>
-//                 <p className={styles.value}>{summary?.subTotal}</p>
-//             </div>            
-//             <div className={styles.itemRow}>
-//                 <p className={styles.label}>Discount</p>
-//                 <p className={styles.value}>{summary?.totalDiscount}</p>
-//             </div>
-//             <div className={styles.totalContainer}>
-//                 <p className={styles.totalLabel}>Net Total</p>
-//                 <p className={styles.totalValue}>{summary?.netTotal}</p>
-//             </div>
-//         </div>
-//         </td>
-        
-//         </tr> 
-//         </table>
-        
-//         </div> 
-// </div>
-// )}
-            
-//     </div>
-//   )
-// }
-
-// export default AllOrder
