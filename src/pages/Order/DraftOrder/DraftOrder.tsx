@@ -20,7 +20,7 @@ const DraftOrder = ({status}) => {
 
   useEffect(() => {
     if (data) {
-      setOrders(data?.data);
+      setOrders(data);
     }
   }, [data]);
 
@@ -29,7 +29,7 @@ const DraftOrder = ({status}) => {
 
   // Filter
   const filteredOrders = orders.filter((order) =>
-    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase())
+    order?.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase()) | order?.customer_code?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // ---------- Handle Delete ------------
@@ -103,11 +103,11 @@ const handleDelete = async (id: string) => {
               <a onClick={()=>handleDelete(order?._id)} className={styles.deleteButton}>{orderDeleting ? "Deleting" : "Delete"}</a>
               </div>
               
-              <h3>Order No : {order._id.slice(-5).toUpperCase()}</h3>
+              <h3>Order No : {order?.invoice_no}</h3>
               <div className={styles.statusContainer}>
                 <p className={styles.status}>Status: <span>{order.status}</span></p>
-                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue={order.status}>
-                  <option disabled value="change">Change</option>
+                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue={order?.status}>
+                  <option disabled value={status}>Change</option>
                   <option value="rough">Rough</option>
                   <option value="ladger">Ladger</option>
                 </select>
@@ -173,20 +173,20 @@ const handleDelete = async (id: string) => {
           </div>
         </div>
       )) :
-      <div className={styles.emptyOrderContainer}>
-        
-        <img 
-            src="https://img.freepik.com/free-vector/flat-design-no-data-illustration_23-2149264860.jpg" 
-            alt="No orders illustration" 
-            className={styles.emptyIllustration}/>
-        <h2>No Orders Yet</h2>
-        <p>When you create orders, they'll appear here. Get started by creating your first order.</p>
-        <button className={styles.addOrderBtn} >Create New Order</button>
-        
-        <div className={styles.attribution}>
-            Illustration by <a href="https://www.freepik.com/" target="_blank">Freepik</a>
-        </div>
+      <>
+      <div className={styles.emptycontainer}>
+      <div className={styles.box}>
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
+          alt="Empty Box"
+          className={styles.image}
+        />
+        <h2 className={styles.title}>No Orders Yet</h2>
+        <p className={styles.subtitle}>Your recent orders will appear here once available.</p>
+      </div>
     </div>
+      </>
+      
       }      
                        <ConfirmationModal
                        isOpen={isOpen}

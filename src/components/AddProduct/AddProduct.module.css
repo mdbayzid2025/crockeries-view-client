@@ -337,6 +337,7 @@
     padding: 4px 7px;
     outline: none;
     border: none;
+    cursor: pointer;
   }
   .editBtn{
     border: 1px solid navy;

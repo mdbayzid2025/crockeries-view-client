@@ -9,6 +9,7 @@
   /* Utility classes */
   .fixed {
     position: fixed;
+    z-index: -10;
   }
   
   .bottom0 {
@@ -227,13 +228,11 @@
 .addressContainer {
   padding-left: 3.5rem;
   padding-right: 3.5rem;
+  table tr td{
+    padding-inline: 50px;
+  }
 }
-
- 
-
-
-  
-  
+   
   @page {
     margin: 0;
   }
@@ -404,6 +403,7 @@
   align-items: center;
   justify-content: space-between;  
   margin-top: auto;
+  min-height: 100px;;
 }
 
 .footerLeft {  

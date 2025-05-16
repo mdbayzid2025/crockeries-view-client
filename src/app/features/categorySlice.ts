@@ -22,14 +22,15 @@ export const categoryApiSlice =apiSlice.enhanceEndpoints({addTagTypes: ['Categor
     }),
     updateCategory: builder.mutation({
       query: ({id, ...rest})=>({
-        url: `/${id}`,
+        url: `category/${id}/update`,
         method: "PUT",
         body: rest,
-      })
+      }),
+      invalidatesTags: ["Category", "Brand"]
     }),
     deleteCategory: builder.mutation({
       query: (id)=>({
-        url: `/${id}`,
+        url: `category/${id}/delete-category`,
         method: "DELETE"
       }),
       invalidatesTags: ["Category"]
@@ -43,12 +44,11 @@ export const categoryApiSlice =apiSlice.enhanceEndpoints({addTagTypes: ['Categor
       invalidatesTags: ["Category", "Brand"]
     }),
     deleteBrand: builder.mutation({
-        query: ({id, ...rest})=>({
-          url: `/${id}/delete-brand`,
-          method: "DELETE",
-          rest,
+        query: ({id, brand})=>({
+          url: `category/${id}/delete-brand?brand=${encodeURIComponent(brand)}`,
+          method: "DELETE",          
         }),
-        invalidatesTags: ["Category"]
+        invalidatesTags: ["Category", "Brand"]
       }),
   })
 })

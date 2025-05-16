@@ -11,6 +11,7 @@ import Invoice from "../components/Invocie/Invoice";
 import UpdateProduct from "../pages/AllProducts/UpdateProduct";
 import UpdateOrder from "../pages/Order/UpdateOrder/UpdateOrder";
 import UpdateCustomer from "../pages/Customer/UpdateCustomer";
+import Settings from "../pages/Setting/Settings";
 
 
 
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
             {
                 path: "/order",
                 element: <Order />
-            },          
+            },  
+            {
+                path: "/settings",
+                element: <Settings />
+            },    
             {
                 path: "/product/:id",
                 element: <UpdateProduct />

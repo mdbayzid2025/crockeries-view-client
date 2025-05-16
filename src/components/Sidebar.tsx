@@ -1,3 +1,4 @@
+
 import styles from './Sidebar.module.css';
 import SidebarHeader from './Sidebar/SidebarHeader';
 import SidebarMenu from './Sidebar/SidebarMenu';
@@ -6,6 +7,7 @@ import SidebarMenu from './Sidebar/SidebarMenu';
 import ThemeToggle from './ThemeToggle';
 
 const Sidebar = ({ isOpen, toggleSidebar, darkMode, toggleMode, setIsClose, isClose }) => {
+ 
   return (
     <nav className={`${styles.sidebar} ${isClose ? styles.hide : styles.show} ${!isOpen ? styles.close : ''}`}>
       <SidebarHeader isOpen={isOpen} setIsClose={setIsClose} isClose={isClose} toggleSidebar={toggleSidebar} />

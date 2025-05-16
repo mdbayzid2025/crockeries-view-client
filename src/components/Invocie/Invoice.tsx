@@ -3,6 +3,7 @@ import styles from './invoice.module.css';
 import { useReactToPrint } from 'react-to-print';
 import { useGetOrderByIdQuery } from '../../app/features/orderService';
 import { useParams } from 'react-router-dom';
+import { useShop } from '../../app/Context/ShopContext';
 
 
 const siteInfo = {
@@ -34,12 +35,17 @@ const formatDate = (dateStr: string) => {
   return `${day}-${month}-${year}`;
 };
 
+const {shop, loadiding} = useShop()
 useEffect(()=>{
 if(orderData){
   setOrdersInfo(orderData?.data)
 }
 },[orderData])
 
+
+if(loadiding){
+  return <p>Loading....</p>
+}
   return (
     <div className={styles.invoiceContainer} ref={contentRef}>
       <button onClick={() => reactToPrintFn()} className={styles.printButton}>
@@ -54,8 +60,8 @@ if(orderData){
                 <td className={`${styles.wFull} ${styles.alignTop} `}>
                   <div className={`${styles.logoContainer}`}>
                   <div className={styles.logoContain}>
-                    <img src="	https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt1PUqNjMHYFvt0o1hzlilB2YTjP1xt9zkvg&s" className={styles.h12} alt="Company Logo" />
-                    <h1>Crockeries <span>View</span></h1>
+                    <img src={shop?.logo ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt1PUqNjMHYFvt0o1hzlilB2YTjP1xt9zkvg&s"} className={styles.h12} alt="Company Logo" />
+                    <h1>{shop?.site_name}<span>View</span></h1>
                   </div>
                   </div>                  
                 </td>
@@ -79,12 +85,12 @@ if(orderData){
                               <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>{orderData?.data?.invoice_no}</p>
                             </div>
                           </td>
-                          <td className={styles.pl4}>
+                          {/* <td className={styles.pl4}>
                             <div>
                               <p className={`${styles.whitespaceNowrap} ${styles.textSlate400} ${styles.textRight}`}>Invoice #</p>
                               <p className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain} ${styles.textRight}`}>{orderData?.data?.invoice_no}</p>
                             </div>
-                          </td>
+                          </td> */}
                         </tr>}
                       </tbody>
                     </table>
@@ -100,13 +106,12 @@ if(orderData){
           <table className={` ${styles.bgSlate100} ${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <tbody>
               {orderData?.data && <tr>
-                <td className={`${styles.wHalf} ${styles.alignTop}`}>
+                <td className={` ${styles.wHalf} ${styles.alignTop} ${styles.textLeft}`}>
                   <div className={`${styles.textSm} ${styles.textNeutral600}`}>
                     <p className={styles.fontBold}>{orderData?.data?.customer_name}</p>
                     <p>Code: {orderData?.data?.customer_code}</p>
                     <p>Mobile: {orderData?.data?.mobile}</p>
-                    <p>{orderData?.data?.address}</p>
-                    <p>{orderData?.data?.district}</p>                    
+                    <p>{orderData?.data?.address}, {orderData?.data?.district}</p>                           
                   </div>
                 </td>
                 <td className={`${styles.wHalf} ${styles.alignTop} ${styles.textRight}`}>
@@ -155,8 +160,8 @@ if(orderData){
                   <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.summaryTable}`}>
                     <tbody>
                       <tr>
-                        <td className={styles.wFull}></td>
-                        <td>
+                        <td className={styles.wFull} style={{borderBottom: "none"}}></td>
+                        <td style={{borderBottom: "none"}}>
                           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
                             <tbody>
                               <tr>
@@ -199,10 +204,11 @@ if(orderData){
 
         <div className={`${styles.footerContainer} ${styles.px14} ${styles.textSm} ${styles.textNeutral700}`}>
           <div className={`${styles.footerLeft}`}>
-                <p>Authorized By</p>
+                <p>Received By</p>
           </div>
           <div className={styles.footerRight}>
-                <p>Received By</p>
+                
+                <p>Authorized By</p>
           </div>
         </div>
         

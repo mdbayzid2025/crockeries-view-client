@@ -2,10 +2,14 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './AddProduct.module.css';
 import ImageUploadSpinner from '../Common/ImageUploadSpinner/ImageUploadSpinner';
-import { useAddBrandMutation, useAddCategoryMutation, useGetCategoriesQuery } from '../../app/features/categorySlice';
+import { useAddBrandMutation, useAddCategoryMutation, useDeleteBrandMutation, useDeleteCategoryMutation, useGetCategoriesQuery, useUpdateCategoryMutation } from '../../app/features/categorySlice';
 import { FiEdit2, FiCheck, FiX, FiPlus } from 'react-icons/fi';
 import { GiConsoleController } from 'react-icons/gi';
 import { useAddProductMutation } from '../../app/features/productSlice';
+import ConfirmationModal from '../Shared/ConfirmationModal';
+import useConfirmationModal from '../../hooks/useConfirmationModal';
+
+
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -27,10 +31,13 @@ const [loading, setLoading] = useState(false);
  const [addBrand, {isLoading: loading4}] = useAddBrandMutation()
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectBrands, setSelectBrands]   = useState([]);
+  const [deleteCategory] = useDeleteCategoryMutation();
+  const [updateCategory] = useUpdateCategoryMutation();
+  const [deleteBrand] = useDeleteBrandMutation()
 
   // --------------------------- Add Product -----------------
 const [addProduct, {isLoading: loading5}] = useAddProductMutation()
-
+const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useConfirmationModal();
 
 
     // State for showing/hiding add inputs
@@ -47,7 +54,7 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
    
     const [showEditBrand, setShowEditBrand] = useState(false);
     const [updateBrandValue, setUpdateBrandValue] = useState("")
-
+    const [oldBrand, setOldBrand] = useState("")
     // State for editing
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
@@ -60,7 +67,7 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [isBrandOpen, setIsBrandOpen] = useState(false);
 
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpenBrand, setIsOpenBrand] = useState(false)
 
     // Refs for detecting clicks outside
   const categoryRef = useRef(null);
@@ -155,8 +162,7 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
       // If you need the full category object, find it from your categories array
       const selectedCategory = categories1?.data.find(
         (cat) => cat.category === selectedValue
-      );
-      console.log("uuuuuuu", selectedCategory)
+      );      
       setSelectedCategory(selectedCategory);
     
       // Update your form data
@@ -168,8 +174,7 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
 
     const handleSelectCategory =(item) =>{
       setSelectedCategory(item);
-      setSelectBrands(item?.brands)
-      console.log('sssssss', item)
+      setSelectBrands(item?.brands)      
     }
 
 
@@ -185,6 +190,7 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
         // Then reset and hide the input
         console.log(result);
       setNewCategory('');
+
       setShowAddCategory(false);
       } catch (err) {
         // Handle error
@@ -194,17 +200,44 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
     }
   };
 
+  // Handle updating a category
+const handleUpdateCategory = async () => {
+  if (updateCategoryValue.trim()) {    
+    
+    try {
+      const id = selectedCategory?._id;
+      // Assuming you have an API function called updateCategory
+      // that takes the category ID and new name
+      const result = await updateCategory({
+        id,
+        category: updateCategoryValue
+      });
+                  
+      setFormData({...formData, category: result?.data?.category});
+      setUpdateCategoryValue('');
+      setShowEditCategory(false);      
+      
+      // You might want to refresh your categories list here
+      // or update the specific category in your local state
+    } catch (err) {
+      // Handle error
+      console.log(err?.data?.message);
+    } 
+  }
+};
+
+
+
   // Handle adding new brand
   const handleAddBrand = async () => {
     if (newBrand.trim()) {              
       try {
         console.log("newBrand", newBrand);
         const id = selectedCategory?._id;
-        const result = await addBrand({id, brand: newBrand})        
-        // Then reset and hide the input
-        console.log(result);        
+        const result = await addBrand({id, brand: newBrand})                   
         
         setSelectBrands(result?.data?.brands)
+        setSelectedCategory(result?.data);
         setNewBrand('');
       setShowAddBrand(false);
     }  catch (err) {
@@ -214,11 +247,92 @@ const [addProduct, {isLoading: loading5}] = useAddProductMutation()
   }
 };
 
+// handle update brand
+const handleUpdateBrand = async () => {
+  if (oldBrand && updateBrandValue && selectedCategory) {
+    const brandIndex = selectedCategory?.brands.indexOf(oldBrand);    
+    if (brandIndex === -1) {
+      return alert("Brand not found in category");
+    }
+
+    // Update brand in local copy
+    const updatedCategory = { ...selectedCategory,  brands: [...selectedCategory.brands]  };
+    // console.log("uuuuccc", updatedCategory.brands[brandIndex]);
+    // updatedCategory.brands[brandIndex] = updateBrandValue.trim();
+    updatedCategory.brands.splice(brandIndex, 1, updateBrandValue.trim());
+    
+    try {
+      const result = await updateCategory({
+        id: updatedCategory._id,
+        category: updatedCategory?.category,
+        brands: updatedCategory?.brands,
+      });
+            
+      setFormData({ ...formData, category: result?.data?.category, brand: updateBrandValue });
+      setUpdateCategoryValue('');
+      setUpdateBrandValue(updateBrandValue)
+      setShowEditBrand(false);
+      setSelectBrands(result?.data?.brands);
+    } catch (error) {
+      console.log(error?.data?.message || "Update failed");
+    }
+  }
+};
+
+
 const onChange = (data) =>{
   console.log(data)
   setFormData({...formData, brand: data})
 }
+
+
+const handleDelete = async (item: any) => {
+  const shouldDelete = await showConfirmation({
+    title: 'Delete Item',
+    message: `Are you sure you want to delete ${item?.category} category?`,
+    confirmText: 'Delete',
+  });
+
   
+  if (shouldDelete) {        
+    try {            
+    await deleteCategory( item?._id);  
+
+    setSelectedCategory(null);
+    setFormData({...formData, category: ""});
+
+    } catch (error) {
+      console.log('Item deleted:', error);
+    }        
+    }
+};
+
+const handleDeleteBrand = async (brandName: any) => {
+
+  setFormData({...formData, brand: ""})
+  const shouldDelete = await showConfirmation({
+    title: 'Delete Item',
+    message: `Are you sure you want to delete ${brandName} Brand?`,
+    confirmText: 'Delete',
+  });
+    
+  if (shouldDelete) {        
+    try {            
+  
+    const {data} = await deleteBrand({
+    id: selectedCategory?._id,
+    brand: brandName,
+  });
+  
+  console.log("rrr", data?.data?.brands);
+    setSelectBrands(data?.data?.brands)
+    setFormData({...formData, brand: ""});
+
+    } catch (error) {
+      console.log('Item deleted:', error);
+    }        
+    }
+};
   return (
     <div className={styles.formContainer}>
       <div className={styles.formCard}>
@@ -283,8 +397,8 @@ const onChange = (data) =>{
             <div className={styles.addInputContainer}>
               <input
                 type="text"
-                value={updateCategoryValue}
-                onChange={(e) => setUpdateCategoryValue(e.target.value)}
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
                 placeholder="Enter new category"
                 className={styles.input}
               />
@@ -311,7 +425,7 @@ const onChange = (data) =>{
               <button 
                 type="button" 
                 className={styles.confirmAddButton}
-                onClick={handleAddCategory}
+                onClick={handleUpdateCategory}
               >
                 {/* {loadText ? loadText :  "Add"} */}
                 {loading3 ? "loading..." : "Update"}
@@ -351,7 +465,7 @@ const onChange = (data) =>{
                           handleSelectCategory(item)
                         }}
                       >
-                        <span>{item.category}</span>  <span onClick={()=>{setShowEditCategory(!showEditCategory); setUpdateCategoryValue(item.category)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span>
+                        <span>{item.category}</span>  <span  className={styles.actionBtn}> <span onClick={()=>{setShowEditCategory(!showEditCategory); setUpdateCategoryValue(item.category)}} className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button onClick={()=>handleDelete(item)}>Delete</button></span>
                       </div>
                     ))
                   ) : (
@@ -375,7 +489,7 @@ const onChange = (data) =>{
               {showAddBrand ? 'Cancel' : '+ Add Brand'}
             </button>}
 
-            {showEditBrand && <button 
+            {!showEditCategory && showEditBrand && <button 
               type="button" 
               className={styles.addButton}
               onClick={() => setShowEditBrand(!showEditBrand)}
@@ -397,7 +511,7 @@ const onChange = (data) =>{
               <button 
                 type="button" 
                 className={styles.confirmAddButton}
-                onClick={handleAddCategory}
+                onClick={handleAddBrand}
               >
                 {/* {loadText ? loadText :  "Add"} */}
                 {loading3 ? "loading..." : "Add"}
@@ -417,7 +531,7 @@ const onChange = (data) =>{
               <button 
                 type="button" 
                 className={styles.confirmAddButton}
-                onClick={handleAddCategory}
+                onClick={handleUpdateBrand}
               >
                 {/* {loadText ? loadText :  "Add"} */}
                 {loading3 ? "loading..." : "Update"}
@@ -429,19 +543,19 @@ const onChange = (data) =>{
 
 {!showAddBrand && !showEditBrand && <div 
 className={`${styles.customSelect} ${isCategoryOpen ? styles.open : ''}`}
-onClick={() => setIsOpen(!isOpen)}
+onClick={() => setIsOpenBrand(!isOpenBrand)}
 >
 <div className={styles.selectedValue}>
         {formData?.brand || "Select a brand"}
       </div>
-      {isOpen && (
+      {isOpenBrand && (
         <div className={styles.selectDropdown}>    
           <div className={styles.searchBox}>
                   <input
                     type="text"
-                    placeholder="Search categories..."
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    placeholder="Search brand..."
+                    value={brandFilter}
+                    onChange={(e) => setBrandFilter(e.target.value)}
                     className={styles.filterInput}
                     autoFocus
                   />
@@ -451,11 +565,11 @@ onClick={() => setIsOpen(!isOpen)}
             <div key={index} className={styles.option}
             onClick={() => {
               onChange(brand);
-              setIsOpen(false);
+              setIsOpenBrand(false);
             }}
             >
               <span>{brand}</span>      
-              <span onClick={()=>{setShowEditBrand(!showEditCategory); setUpdateBrandValue(brand)}} className={styles.actionBtn}> <span className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button>Delete</button></span>                                  
+              <span className={styles.actionBtn}> <span onClick={()=>{setShowEditBrand(!showEditBrand); setUpdateBrandValue(brand); setOldBrand(brand)}} className={styles.editBtn}><FiEdit2 color='blue' /> Edit</span> <button onClick={()=>handleDeleteBrand(brand)}>Delete</button></span>                                  
             </div>
           ))}
           </div>  
@@ -595,6 +709,15 @@ onClick={() => setIsOpen(!isOpen)}
           </div>
         </form>
       </div>
+       <ConfirmationModal
+              isOpen={isOpen}
+              title={modalProps.title}
+              message={modalProps.message}
+              confirmText={modalProps.confirmText}
+              cancelText={modalProps.cancelText}
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
     </div>
   );
 };

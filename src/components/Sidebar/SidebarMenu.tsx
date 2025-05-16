@@ -3,8 +3,9 @@ import SidebarMenuItem from './SidebarMenuItem';
 
 const menuItems = [
   { name: 'dashboard', icon: 'bx bx-grid-alt', text: 'Dashboard', path: '/dashboard' },  
-  { name: 'order', icon: 'bx bx-bar-chart-alt-2', text: 'Order', path: '/order' },  
-  { name: 'customers', icon: 'bx bx-bar-chart-alt-2', text: 'Customers', path: '/customers' },  
+   { name: 'order', icon: 'bx bx-receipt', text: 'Order', path: '/order' },
+  { name: 'customers', icon: 'bx bx-user', text: 'Customers', path: '/customers' },
+  { name: 'settings', icon: 'bx bx-cog', text: 'Settings', path: '/settings' },
   { name: 'login', icon: 'bx bx-log-in', text: 'Login', path: '/login' },
   { name: 'signup', icon: 'bx bx-user-plus', text: 'Signup', path: '/signup' },
 ];

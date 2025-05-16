@@ -2,7 +2,7 @@
 
 import { apiSlice } from '../api/apiSlice';
 
-export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).injectEndpoints({
+export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order', 'ShopInfo']}).injectEndpoints({
   endpoints: (builder) => ({
     getOrders: builder.query({
       query: (status) => ({
@@ -24,7 +24,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
       }),
       invalidatesTags: ['Order'],
     }),
-
+    
     updateOrder: builder.mutation({
       query: ({ id, ...orderData }) => ({
         url: `orders/${id}`,
@@ -34,10 +34,10 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
       invalidatesTags: (result, error, { id }) => [{ type: 'Order', id }],
     }),
     updateOrderStatus: builder.mutation({
-      query: ({ id, ...status }) => ({
+      query: ({ id, status }) => ({
         url: `orders/${id}/status`,
         method: 'PUT',
-        body: status,
+        body: {status},
       }),
       invalidatesTags: ['Order'],
     }),
@@ -48,6 +48,28 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order']}).inje
       }),
       invalidatesTags: ['Order'],
     }),
+     createShopInfo: builder.mutation({
+      query: (shopData) => ({
+        url: 'settings',
+        method: 'POST',
+        body: shopData,
+      }),
+      invalidatesTags: ['Order', 'ShopInfo'],
+    }),
+
+    getShopInfo: builder.query({
+       query: () => `settings`,
+       providesTags: ["ShopInfo"]
+    }),
+
+     updateShopInfo: builder.mutation({
+      query: (shopData) => ({
+        url: 'settings',
+        method: 'POST',
+        body: shopData,
+      }),
+       invalidatesTags: ['Order', 'ShopInfo'],
+    }),
   }),
 });
 
@@ -56,6 +78,10 @@ export const {
   useGetOrderByIdQuery,
   useCreateOrderMutation,
   
+  useCreateShopInfoMutation,
+  useUpdateShopInfoMutation,
+  useGetShopInfoQuery,
+
   useUpdateOrderMutation,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,

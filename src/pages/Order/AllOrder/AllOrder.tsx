@@ -21,13 +21,13 @@ const AllOrder = ({status}) => {
   
     if (data) {      
       console.log("dddd", data);
-      setOrders(data?.data);
+      setOrders(data);
     }
   }, [data]);
 
   // Filter data
-  const filteredOrders = orders.filter((order) =>
-    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredOrders = orders?.filter((order) =>
+    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase()) | order?.customer_code?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   if (isLoading) return <p>Loading orders...</p>;
   if (isError) return <p>Failed to load orders.</p>;
@@ -56,9 +56,9 @@ const handleDelete = async (id: string) => {
   // ---------- Handle Delete ------------
   const handleUpdateStatus = async (id: string, e: any) => {
     try {
-      const status = e.target.value;  
+      // const status = e.target.value;  
       // Call the update order status function with the selected status and orderId
-      const result = await updateOrderStatus({ id, status });
+      const result = await updateOrderStatus({ id, status: e.target.value});
   
       console.log("Update result:", result);
     } catch (error) {
@@ -99,11 +99,11 @@ const handleDelete = async (id: string) => {
               <a onClick={()=>handleDelete(order?._id)} className={styles.deleteButton}>{orderDeleting ? "Deleting" : "Delete"}</a>
               </div>
               
-              <h3>Order No : {order.invoice_no}</h3>
+              <h3>Order No : {order?.invoice_no}</h3>
               <div className={styles.statusContainer}>
                 <p className={styles.status}>Status: <span>{order.status}</span></p>
-                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue="change">
-                  <option disabled value="change">Change</option>
+                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue={order.status}>
+                  <option disabled value={status}>Change</option>
                   <option value="rough">Rough</option>
                   <option value="ladger">Ladger</option>
                 </select>
@@ -169,7 +169,19 @@ const handleDelete = async (id: string) => {
           </div>
         </div>
       )): 
-       <div className={styles.emptyOrderContainer}>
+      <>
+      <div className={styles.emptycontainer}>
+            <div className={styles.box}>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
+                alt="Empty Box"
+                className={styles.image}
+              />
+              <h2 className={styles.title}>No Orders Yet</h2>
+              <p className={styles.subtitle}>Your recent orders will appear here once available.</p>
+            </div>
+          </div>
+            {/* <div className={styles.emptyOrderContainer}>
               
               <img 
                   src={emptyImg} 
@@ -182,7 +194,9 @@ const handleDelete = async (id: string) => {
               <div className={styles.attribution}>
                   Illustration by <a href="https://www.freepik.com/" target="_blank">Freepik</a>
               </div>
-          </div>
+          </div> */}
+      </>
+     
       }      
                        <ConfirmationModal
                        isOpen={isOpen}
