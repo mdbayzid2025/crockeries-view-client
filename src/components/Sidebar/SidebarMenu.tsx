@@ -23,6 +23,7 @@ const SidebarMenu = ({ isOpen, setIsClose, isClose }) => {
 // const {token} = useShop()
 const isAuthenticated = useSelector(state=>state.auth.isAuthenticated)   
 
+
   const filteredMenuItems = menuItems.filter(item =>
     isAuthenticated ? item.authRequired : !item.authRequired
   );
