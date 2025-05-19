@@ -21,7 +21,7 @@ const router = createBrowserRouter([
       // Public routes
       { path: "/login", element: <LogIn /> },
       { path: "/signup", element: <Signup /> },
-      { path: "/", element: <Dashboard /> },
+        { path: "/", element: <Dashboard /> },
           { path: "/dashboard", element: <PrivateRoute> <AllProducts /></PrivateRoute> },
           { path: "/order", element: <PrivateRoute> <Order /></PrivateRoute> },
           { path: "/settings", element: <PrivateRoute> <Settings /></PrivateRoute> },
