@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from '../../theme/exports/_form.module.css';
 import ImageUploadSpinner from '../../components/Common/ImageUploadSpinner/ImageUploadSpinner';
 import { useCreateShopInfoMutation } from '../../app/features/orderService';
@@ -90,13 +90,25 @@ const Settings = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();    
     try {
-      shop ? await updateShopInfo(formData) : await createShopInfo(formData);      
-       
+      if(shop){   
+        console.log("calling update");
+      await updateShopInfo({...formData, id:shop._id})
+      }else{
+        console.log("calling create");
+      await createShopInfo(formData); 
+      }      
     } catch (error) {
        console.log(err?.data?.message)
     }
   };
 
+
+  useEffect(()=>{
+if(shop){
+    setFormData(prev=>({...prev, ...shop}))
+  }
+  },[shop])
+  
   return (
     <div className={styles.formContainer}>
       <div className={styles.formCard}>
@@ -190,9 +202,9 @@ const Settings = () => {
               <div className={styles.profileImageContainer}>
                 {loadingPhoto ? (
                   <ImageUploadSpinner />
-                ) : photoPreview ? (
+                ) : photoPreview || formData?.photo ? (
                   <div className={styles.profileImageWrapper}>
-                    <img src={photoPreview} alt="Photo" className={styles.imagePreview} />
+                    <img src={photoPreview || formData?.photo} alt="Photo" className={styles.imagePreview} />
                     <button type="button" className={styles.removeImageButton} onClick={() => removeImage('photo')}>×</button>
                   </div>
                 ) : (
@@ -220,9 +232,9 @@ const Settings = () => {
               <div className={styles.profileImageContainer}>
                 {loadingLogo ? (
                   <ImageUploadSpinner />
-                ) : logoPreview ? (
+                ) : logoPreview || formData?.logo ?  (
                   <div className={styles.profileImageWrapper}>
-                    <img src={logoPreview} alt="Logo" className={styles.imagePreview} />
+                    <img src={logoPreview || formData?.logo} alt="Logo" className={styles.imagePreview} />
                     <button type="button" className={styles.removeImageButton} onClick={() => removeImage('logo')}>×</button>
                   </div>
                 ) : (

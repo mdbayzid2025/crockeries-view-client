@@ -118,7 +118,7 @@ const handleDelete = async (id: string) => {
       <td>{data.trade_license}</td>      
       <td className={styles.menuContainer}>
       <button ref={buttonRef} onClick={() => toggleDropdown(data._id)}>
-                <BsThreeDots size={20} style={{ cursor: "pointer" }} />
+                <BsThreeDots color="#121212" size={20} style={{ cursor: "pointer" }} />
             </button>
             
             {openMenu && selectedId === data?._id && (

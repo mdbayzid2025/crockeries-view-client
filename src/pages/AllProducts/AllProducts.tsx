@@ -9,7 +9,7 @@ import { CiSearch } from 'react-icons/ci'
 import { useDeleteProductMutation, useGetProductsQuery } from "../../app/features/productSlice";
 import useConfirmationModal from "../../hooks/useConfirmationModal";
 import ConfirmationModal from "../../components/Shared/ConfirmationModal";
-import UpdateProduct from "./UpdateProduct";
+
 import { Link } from "react-router-dom";
 import { BiCross } from "react-icons/bi";
 import { IoIosClose, IoMdClose } from "react-icons/io";

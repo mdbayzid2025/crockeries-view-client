@@ -185,6 +185,9 @@ background-color: #F3F4F6;
     background: none;
     outline: none;
     border: none;
+    svg{
+      fill: #121212;
+    }
   }
 }
 .menu {

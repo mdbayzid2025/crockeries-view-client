@@ -13,7 +13,8 @@ const Sidebar = ({ isOpen, toggleSidebar, darkMode, toggleMode, setIsClose, isCl
       <SidebarHeader isOpen={isOpen} setIsClose={setIsClose} isClose={isClose} toggleSidebar={toggleSidebar} />
       <div className={styles.menuBar}>
         <SidebarMenu isOpen={isOpen}  setIsClose={setIsClose} isClose={isClose}/>
-        <ThemeToggle darkMode={darkMode} toggleMode={toggleMode} />
+        <ThemeToggle  />
+        
       </div>
     </nav>
   );

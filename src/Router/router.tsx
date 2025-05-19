@@ -5,67 +5,33 @@ import LogIn from "../pages/Auth/LogIn";
 import Signup from "../pages/Auth/Signup";
 import AllProducts from "../pages/AllProducts/AllProducts";
 import Order from "../pages/Order/Order";
-
 import Customers from "../pages/Customer/Customers";
 import Invoice from "../components/Invocie/Invoice";
 import UpdateProduct from "../pages/AllProducts/UpdateProduct";
 import UpdateOrder from "../pages/Order/UpdateOrder/UpdateOrder";
 import UpdateCustomer from "../pages/Customer/UpdateCustomer";
 import Settings from "../pages/Setting/Settings";
-
-
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <MainLayout />,
-        children: [
-            {
-                path: "/",
-                element: <Dashboard />
-            },          
-            {
-                path: "/dashboard",
-                element: <AllProducts />
-            },          
-            {
-                path: "/order",
-                element: <Order />
-            },  
-            {
-                path: "/settings",
-                element: <Settings />
-            },    
-            {
-                path: "/product/:id",
-                element: <UpdateProduct />
-            },          
-            {
-                path: "/order/:id",
-                element: <UpdateOrder />
-            },          
-            {
-                path: "/customers",
-                element: <Customers />
-            },          
-            {
-                path: "/customers/:id",
-                element: <UpdateCustomer />
-            },          
-            {
-                path: "/login",
-                element: <LogIn />
-            },          
-            {
-                path: "/invoice/:id",
-                element: <Invoice />
-            },          
-            {
-                path: "/signup",
-                element: <Signup />
-            },          
-        ]
-    }]
-)
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      // Public routes
+      { path: "/login", element: <LogIn /> },
+      { path: "/signup", element: <Signup /> },
+      { path: "/", element: <Dashboard /> },
+          { path: "/dashboard", element: <PrivateRoute> <AllProducts /></PrivateRoute> },
+          { path: "/order", element: <PrivateRoute> <Order /></PrivateRoute> },
+          { path: "/settings", element: <PrivateRoute> <Settings /></PrivateRoute> },
+          { path: "/product/:id", element: <PrivateRoute> <UpdateProduct /></PrivateRoute> },
+          { path: "/order/:id", element: <PrivateRoute> <UpdateOrder /></PrivateRoute> },
+          { path: "/customers", element: <PrivateRoute> <Customers /></PrivateRoute> },
+          { path: "/customers/:id", element: <PrivateRoute> <UpdateCustomer /></PrivateRoute> },
+          { path: "/invoice/:id", element: <PrivateRoute> <Invoice /></PrivateRoute> },      
+    ]
+  }
+]);
 
 export default router;

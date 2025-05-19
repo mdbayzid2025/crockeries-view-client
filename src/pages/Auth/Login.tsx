@@ -1,13 +1,19 @@
 
+import { useDispatch } from 'react-redux';
+import { useShop } from '../../app/Context/ShopContext';
 import { useLoginMutation } from '../../app/features/authService';
 import styles from './Login.module.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { setCredentials } from '../../app/features/authSlice';
 
 
 
 const LogIn = () => {
+  const {setToken} = useShop();
   const [login, {isLoading, isError}] = useLoginMutation()
   
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const handleLogin = async e =>{
     e.preventDefault()
@@ -21,11 +27,15 @@ const LogIn = () => {
     try {
       const result = await login(data).unwrap();
       // Handle successful login
-      console.log(result)
-      navigate("/dashboard")
+      console.log("result", result);
+      setToken(true);
+      localStorage.setItem("accessToken", result?.token)
+      dispatch(setCredentials(result));
+      navigate("/")
     } catch (err) {
       // Handle error
-      console.log(err?.data?.message)
+      // alert(err)
+      console.log("rrrr", err)
     }
   }
   return (

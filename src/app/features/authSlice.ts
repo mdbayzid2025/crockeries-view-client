@@ -2,12 +2,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: null,
-  token: null,
-  isAuthenticated: false,
+  user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("User")) : null,
+  refreshToken: localStorage.getItem("accessToken") ? localStorage.getItem("acccessToken") : null,
+  accessToken: localStorage.getItem("refreshToken") ? localStorage.getItem("refreshToken") : null,
+  isAuthenticated: !!localStorage.getItem("user"),
   loading: false,
   error: null,
-  accessToken: null,
 };
 
 const authSlice = createSlice({
@@ -16,8 +16,13 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
       state.isAuthenticated = true;
+
+      localStorage.setItem("user", JSON.stringify(state?.user));
+      localStorage.setItem("accessToken", state?.accessToken);
+      localStorage.setItem("refreshToken", state?.refreshToken);
     },
     receivedToken: (state, action)=>{
       state.accessToken = action.payload;
@@ -25,9 +30,12 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
-      state.token = null;
+      state.refreshToken = null;
       state.accessToken = null;
       state.isAuthenticated = false;
+      localStorage.removeItem("user", state?.accessToken);
+      localStorage.removeItem("accessToken", state?.accessToken);
+      localStorage.removeItem("refreshToken", state?.refreshToken);
     },
   },
 });

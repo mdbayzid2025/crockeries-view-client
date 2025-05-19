@@ -311,6 +311,9 @@
   .wFull{
   padding-inline: 0;
   }   
+  .container{
+    padding-top: 0 !important;
+  }
   .px14{
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -330,6 +333,7 @@
   
   .tableContainer{
     overflow-x: auto;
+    border: 1px solid rgba(0,0,0,.3);
   }
   .tableContainer.px14{
     padding-left: 0;
@@ -403,7 +407,7 @@
   align-items: center;
   justify-content: space-between;  
   margin-top: auto;
-  min-height: 100px;;
+  min-height: 150px;;
 }
 
 .footerLeft {  

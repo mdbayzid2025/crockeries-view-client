@@ -26,7 +26,8 @@ export const apiSlice = createApi({
 
   const refreshResult = await baseQuery({
     url: "auth/refresh-token",
-    method: "GET",
+    method: "POST",
+    body: {token: token}
   }, api, extraOptions);
 
   if (refreshResult?.data) {
@@ -38,7 +39,7 @@ export const apiSlice = createApi({
     api.dispatch(logout());
   }
 }
-        return result;
+return result;
     },
     endpoints: builder => ({})
 })

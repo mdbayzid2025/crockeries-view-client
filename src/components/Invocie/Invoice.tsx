@@ -43,6 +43,7 @@ if(orderData){
 },[orderData])
 
 
+
 if(loadiding){
   return <p>Loading....</p>
 }
@@ -52,8 +53,11 @@ if(loadiding){
         Print Invoice
       </button>
       
-      <div className={`${styles.py4} `} >
-        <div className={`${styles.px14} ${styles.py6} `}>
+      {/* ${styles.py6}
+      ${styles.py4}
+      */}
+      <div  className={` ${styles.container}`} >
+        <div className={`${styles.px14} `}>
           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} `}>
             <tbody>
               <tr>
@@ -61,7 +65,7 @@ if(loadiding){
                   <div className={`${styles.logoContainer}`}>
                   <div className={styles.logoContain}>
                     <img src={shop?.logo ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt1PUqNjMHYFvt0o1hzlilB2YTjP1xt9zkvg&s"} className={styles.h12} alt="Company Logo" />
-                    <h1>{shop?.site_name}<span>View</span></h1>
+                    <h1>{shop?.site_name}</h1>
                   </div>
                   </div>                  
                 </td>
@@ -105,7 +109,7 @@ if(loadiding){
         <div className={` ${styles.py6} ${styles.textSm} ${styles.addressContainer}`}>
           <table className={` ${styles.bgSlate100} ${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
             <tbody>
-              {orderData?.data && <tr>
+              {orderData?.data &&  shop &&  <tr>
                 <td className={` ${styles.wHalf} ${styles.alignTop} ${styles.textLeft}`}>
                   <div className={`${styles.textSm} ${styles.textNeutral600}`}>
                     <p className={styles.fontBold}>{orderData?.data?.customer_name}</p>
@@ -116,10 +120,10 @@ if(loadiding){
                 </td>
                 <td className={`${styles.wHalf} ${styles.alignTop} ${styles.textRight}`}>
                   <div className={`${styles.textSm} ${styles.textNeutral600}`}>
-                    <p className={styles.fontBold}>{siteInfo?.name}</p>                    
-                    <p>VAT: {siteInfo?.reg_no}</p>                    
-                    <p>Mobile: {siteInfo?.mobile}</p>
-                    <p>{siteInfo?.address} {siteInfo?.district}.</p>
+                    <p className={styles.fontBold}>{shop?.site_name}</p>                    
+                    <p>VAT: {shop?.vat_no}</p>                    
+                    <p>Mobile: {shop?.mobile}</p>
+                    <p>{shop?.address}, {shop?.district}.</p>
                   </div>
                 </td>
               </tr>}
@@ -127,7 +131,7 @@ if(loadiding){
           </table>
         </div>
 
-        <div className={`${styles.px14} ${styles.py10} ${styles.textSm} ${styles.textNeutral700} ${styles.tableContainer}`}>
+        <div className={`${styles.px14} ${styles.textSm} ${styles.textNeutral700} ${styles.tableContainer}`}>
           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.productsTable}`}>
             <thead>
               <tr>
@@ -159,39 +163,39 @@ if(loadiding){
                 <td colSpan="9">
                   <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0} ${styles.summaryTable}`}>
                     <tbody>
-                      <tr>
+                      {ordersInfo && <tr>
                         <td className={styles.wFull} style={{borderBottom: "none"}}></td>
                         <td style={{borderBottom: "none"}}>
                           <table className={`${styles.wFull} ${styles.borderCollapse} ${styles.borderSpacing0}`}>
                             <tbody>
                               <tr>
-                                <td className={`${styles.borderB} ${styles.p3}`}>
+                                <td className={`${styles.borderB} `}>
                                   <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>Net total:</div>
                                 </td>
-                                <td className={`${styles.borderB} ${styles.p3} ${styles.textRight}`}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>$320.00</div>
+                                <td className={`${styles.borderB}  ${styles.textRight}`}>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.sub_total}</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td className={styles.p3}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>VAT total:</div>
+                                <td >
+                                  <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>Discount:</div>
                                 </td>
-                                <td className={`${styles.p3} ${styles.textRight}`}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>$64.00</div>
+                                <td className={` ${styles.textRight}`}>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.discount}</div>
                                 </td>
                               </tr>
                               <tr>
-                                <td className={`${styles.bgMain} ${styles.p3}`}>
+                                <td className={`${styles.bgMain} `}>
                                   <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>Total:</div>
                                 </td>
-                                <td className={`${styles.bgMain} ${styles.p3} ${styles.textRight}`}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>$384.00</div>
+                                <td className={`${styles.bgMain}  ${styles.textRight}`}>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>{ordersInfo?.net_total}</div>
                                 </td>
                               </tr>
                             </tbody>
                           </table>
                         </td>
-                      </tr>
+                      </tr>}
                     </tbody>
                   </table>
                 </td>
@@ -217,15 +221,15 @@ if(loadiding){
           <p className={styles.italic}>Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</p>
         </div> */}
 
-        <footer className={`${styles.fixed} ${styles.bottom0} ${styles.left0} ${styles.bgSlate100} ${styles.wFull} ${styles.textNeutral600} ${styles.textCenter} ${styles.textXs} ${styles.py3}`}>
-        {siteInfo?.name}
+     {shop &&   <footer className={`${styles.fixed} ${styles.bottom0} ${styles.left0} ${styles.bgSlate100} ${styles.wFull} ${styles.textNeutral600} ${styles.textCenter} ${styles.textXs} ${styles.py3}`}>
+        {shop?.site_name}
           <span className={`${styles.textSlate300} ${styles.px2}`}>|</span>
-          {siteInfo?.email}
+          {shop?.email}
           <span className={`${styles.textSlate300} ${styles.px2}`}>|</span>
-          {siteInfo?.mobile}
+          {shop?.mobile}
           <span className={`${styles.textSlate300} ${styles.px2}`}>|</span>
-          {siteInfo?.address} {siteInfo?.district}
-        </footer>
+          {shop?.address} {shop?.district}
+        </footer>}
       </div>
     </div>
   );

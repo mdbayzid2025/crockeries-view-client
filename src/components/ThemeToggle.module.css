@@ -67,3 +67,38 @@
   body.dark .switch::before {
     left: 20px;
   }
+
+  button{    
+        
+    text-decoration: none;
+    border-radius: 6px;
+   
+    padding: 5px 10px;
+    outline: none;
+    border: none;
+    background: none;
+    font-size: 18px;   
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .logOutBtn{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+     transition: var(--tran-03);
+    background: var(--primary-color);
+    color: #fff;
+     cursor: pointer;
+  }
+
+  .logOutBtn:hover{
+    border: 1px solid var(--primary-color);
+    background-color: transparent;
+    color: var(--primary-color);
+    button{
+ color: var(--primary-color);
+    }
+  }

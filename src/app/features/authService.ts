@@ -1,27 +1,27 @@
 // features/auth/authService.js
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const authApi = createApi({
-  reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/v1/auth/' }),
+import { apiSlice } from '../api/apiSlice';
+
+export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).injectEndpoints({  
+  
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: 'login',
+        url: 'auth/login',
         method: 'POST',
         body: credentials,
       }),
     }),
     register: builder.mutation({
       query: (userData) => ({
-        url: 'register',
+        url: 'auth/register',
         method: 'POST',
         body: userData,
       }),
     }),
     logout: builder.mutation({
       query: () => ({
-        url: 'logout',
+        url: 'auth/logout',
         method: 'POST',
       }),
     }),

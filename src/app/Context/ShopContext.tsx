@@ -7,27 +7,14 @@ export const ShopProvider = ({ children }) => {
 const [shop, setShop] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
+  const [token, setToken] = useState(false);
 
   const {data, isLoading} = useGetShopInfoQuery();
 
   const [createShopInfo] = useCreateShopInfoMutation();
   const [updateShopInfoMutation] = useUpdateShopInfoMutation();
 
-  // Fetch shop info
-//   const getShopInfo = useCallback(async () => {
-//     setLoading(true);
-//     setError(null);
-//     try {
-//       const response = await shopData().unwrap();
-//       console.log("rrrr", response);
-//       setShop(response);
-//     } catch (err) {
-//       setError(err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   }, [shopData]);
-
+  
   // Create shop info
   const addShopInfo = useCallback(async (data: any) => {
     setLoading(true);
@@ -56,6 +43,7 @@ const [shop, setShop] = useState<any>(null);
     }
   }, [updateShopInfoMutation]);
 
+
   useEffect(()=>{
     if(data){
 
@@ -71,6 +59,8 @@ const [shop, setShop] = useState<any>(null);
           shop,
         loading,
         error,        
+        token,
+        setToken,
         addShopInfo,
         updateShopInfo,
       }}
