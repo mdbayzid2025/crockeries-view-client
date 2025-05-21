@@ -155,9 +155,9 @@ if(loadiding){
                 <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>{item?.brand}</td>
                 <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.textCenter}`}>{item?.quantity}</td>
                 <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} `}>{item?.unit}</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.price}</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.discount}</td>
-                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.total}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.price.toFixed(2)}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.discount.toFixed(2)}</td>
+                <td className={`${styles.borderB} ${styles.py3} ${styles.pl2} ${styles.pr3} `}>{item?.total.toFixed(2)}</td>
               </tr>)}             
               <tr>
                 <td colSpan="9">
@@ -173,7 +173,7 @@ if(loadiding){
                                   <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>Net total:</div>
                                 </td>
                                 <td className={`${styles.borderB}  ${styles.textRight}`}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.sub_total}</div>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.sub_total.toFixed(2)}</div>
                                 </td>
                               </tr>
                               <tr>
@@ -181,7 +181,7 @@ if(loadiding){
                                   <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>Discount:</div>
                                 </td>
                                 <td className={` ${styles.textRight}`}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.discount}</div>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.discount.toFixed(2)}</div>
                                 </td>
                               </tr>
                               <tr>
@@ -189,7 +189,7 @@ if(loadiding){
                                   <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>Total:</div>
                                 </td>
                                 <td className={`${styles.bgMain}  ${styles.textRight}`}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>{ordersInfo?.net_total}</div>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>{ordersInfo?.net_total.toFixed(2)}</div>
                                 </td>
                               </tr>
                             </tbody>

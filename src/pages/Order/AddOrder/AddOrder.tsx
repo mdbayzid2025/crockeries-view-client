@@ -127,20 +127,39 @@ const AddOrder = ({setSelectTab}) => {
   };
 
 
-  const updateQuantity = (index, newQuantity) => {
-    if (newQuantity < 1) return;
+  const updateQuantity = (index, value) => {
+  // Convert value to string and remove leading zeros
+  const cleanValue = String(value).replace(/^0+(?=\d)/, '');
+
+  // Parse as number and validate
+  let newQty = Number(cleanValue);
+  if (isNaN(newQty) || newQty < 0) {
+    newQty = 0;
+  }
+
+  setFormData(prev => {
+    const updatedItems = prev.items.map((item, i) =>
+      i === index ? { ...item, quantity: newQty } : item
+    );
+    return { ...prev, items: updatedItems };
+  });
+};
+
+
+  // const updateQuantity = (index, newQuantity) => {
+  //   if (newQuantity < 1) return;
     
-    const updatedItems = [...formData.items];
-    updatedItems[index].quantity = newQuantity;
-    setFormData(prev => ({ ...prev, items: updatedItems }));
-  };
+  //   const updatedItems = [...formData.items];
+  //   updatedItems[index].quantity = newQuantity;
+  //   setFormData(prev => ({ ...prev, items: updatedItems }));
+  // };
 
   const updateDiscount = (value, id) =>{    
     const existingItemIndex = formData.items.findIndex(item => item._id === id);           
     // Optionally: Remove leading zero if present       
-    const cleanValue = value.replace(/^0+(?=\d)/, '');
+    const cleanValue = String(value).replace(/^0+(?=\d)/, '');
     
-    const updateProduct = formData.items.map((item, index)=>index === existingItemIndex ? {...item, discount: cleanValue}: item);
+    const updateProduct = formData.items.map((item, index)=>index === existingItemIndex ? {...item, discount: Number(cleanValue)}: item);
     setFormData(prev => ({ ...prev, items: updateProduct }));    
   }
 
@@ -358,25 +377,34 @@ const AddOrder = ({setSelectTab}) => {
                           </td>                        
                        <td>{item.unit}</td>
                        <td>{item.price}</td>
+                       
                        <td><input onChange={(e)=>updateDiscount(e.target.value, item?._id)} className={styles.discountInput} defaultValue={0} type="text" placeholder='Discount'/></td>
                         <td>
-                          <div className={styles.quantityControl}>
-                            <button 
-                              type="button" 
-                              onClick={() => updateQuantity(index, item.quantity - 1)}
-                              className={styles.quantityBtn}
-                            >
-                              -
-                            </button>
-                            <span>{item.quantity}</span>
-                            <button 
-                              type="button" 
-                              onClick={() => updateQuantity(index, item.quantity + 1)}
-                              className={styles.quantityBtn}
-                            >
-                              +
-                            </button>
-                          </div>
+                      <div className={styles.quantityControl}>
+                          <button 
+                            type="button" 
+                            onClick={() => updateQuantity(index, item.quantity - 1)}
+                            className={styles.quantityBtn}
+                          >
+                            -
+                          </button>
+                          <input 
+                            className={styles.qtyInput}
+                            onChange={(e) => updateQuantity(index, e.target.value)}                                                          
+                            // onChange={(e) => updateQuantity(index, e.target.value)} 
+                            value={item?.quantity}                               
+                            type="number" 
+                            min={0}
+                            placeholder="Order Qty"
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => updateQuantity(index, item.quantity + 1)}
+                            className={styles.quantityBtn}
+                          >
+                            +
+                          </button>
+                        </div>
                         </td>
                         <td>
                           {((item.price * item.quantity) - item.discount).toFixed(2)}

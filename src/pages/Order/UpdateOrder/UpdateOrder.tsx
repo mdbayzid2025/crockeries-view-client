@@ -4,7 +4,7 @@ import { useGetProductsQuery } from '../../../app/features/productSlice';
 import { useGetCustomersQuery } from '../../../app/features/customerService';
 import { useUpdateOrderMutation, useGetOrderByIdQuery } from '../../../app/features/orderService';
 import ButtonLoader from '../../../components/Shared/ButtonLoader';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateOrder = () => {
   const { id } = useParams();
@@ -39,6 +39,7 @@ const UpdateOrder = () => {
     netTotal: 0,
   });
 
+  const navigate = useNavigate()
   // Initialize form with order data when it's loaded
   useEffect(() => {
     if (orderData) {
@@ -144,10 +145,17 @@ const UpdateOrder = () => {
 
   // Update product quantity
   const updateQuantity = (index, newQuantity) => {
-    if (newQuantity < 1) return;
+    const cleanValue = String(newQuantity).replace(/^0+(?=\d)/, '');
+
+
+     // Parse as number and validate
+  let newQty = Number(cleanValue);
+  if (isNaN(newQty) || newQty < 0) {
+    newQty = 0;
+  }
     
     const updatedItems = [...formData.order_items];
-    updatedItems[index].quantity = newQuantity;
+    updatedItems[index].quantity = newQty;
     setFormData(prev => ({ ...prev, order_items: updatedItems }));
   };
 
@@ -182,7 +190,8 @@ const UpdateOrder = () => {
     
     try {    
       const result = await updateOrder(formData);
-      console.log(result);      
+      console.log(result);  
+      navigate("/order")    
     } catch (error) {
       console.log(error?.message);
     }    
@@ -199,7 +208,7 @@ const UpdateOrder = () => {
   return (
     <div className={styles.orderFormContainer}>
       {orderData && <div className={styles.orderForm}>
-        <h2 className={styles.formTitle}>Update Order {orderData?.data?._id.slice(-5).toUpperCase()}</h2>
+        <h2 className={styles.formTitle}>Update Order: {orderData?.data?.invoice_no}</h2>
         
         <form onSubmit={handleSubmit}>
           {/* Customer Information */}
@@ -402,22 +411,30 @@ const UpdateOrder = () => {
                         </td>
                         <td>
                           <div className={styles.quantityControl}>
-                            <button 
-                              type="button" 
-                              onClick={() => updateQuantity(index, item.quantity - 1)}
-                              className={styles.quantityBtn}
-                            >
-                              -
-                            </button>
-                            <span>{item.quantity}</span>
-                            <button 
-                              type="button" 
-                              onClick={() => updateQuantity(index, item.quantity + 1)}
-                              className={styles.quantityBtn}
-                            >
-                              +
-                            </button>
-                          </div>
+                          <button 
+                            type="button" 
+                            onClick={() => updateQuantity(index, item.quantity - 1)}
+                            className={styles.quantityBtn}
+                          >
+                            -
+                          </button>
+                          <input 
+                            className={styles.qtyInput}
+                            onChange={(e) => updateQuantity(index, e.target.value)}                                                          
+                            
+                            value={item?.quantity}                               
+                            type="number" 
+                            min={0}
+                            placeholder="Order Qty"
+                          />
+                          <button 
+                            type="button" 
+                            onClick={() => updateQuantity(index, item.quantity + 1)}
+                            className={styles.quantityBtn}
+                          >
+                            +
+                          </button>
+                        </div>
                         </td>
                         <td>
                           {((item.price * item.quantity) - (item.discount || 0)).toFixed(2)}

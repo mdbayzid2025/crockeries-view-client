@@ -1,45 +1,36 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { logout, receivedToken } from "../features/authSlice";
-
-let token : any;
+import { logout } from "../features/authSlice";
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/v1/",
-    prepareHeaders:(header)=>{
-        if(token){
-            header.set("Authorization", `Bearer ${token}`)
-        }
-
-        return header;
-    }
-})
-
+  baseUrl: "http://localhost:5000/api/v1/",
+  credentials: "include", // send cookies with each request
+});
 
 export const apiSlice = createApi({
-    baseQuery: async (args, api, extraOptions) =>{
-        
-        token = localStorage.getItem("accessToken");
-        let result = await baseQuery(args, api, extraOptions);
+  baseQuery: async (args, api, extraOptions) => {
+    let result = await baseQuery(args, api, extraOptions);
 
-       if (result?.error?.status === 401) {
-  token = localStorage.getItem("refreshToken");
+    if (result?.error?.status === 401) {
+      // Attempt to refresh token
+      const refreshResult = await baseQuery(
+        {
+          url: "auth/refresh-token",
+          method: "GET",
+        },
+        api,
+        extraOptions
+      );
 
-  const refreshResult = await baseQuery({
-    url: "auth/refresh-token",
-    method: "POST",
-    body: {token: token}
-  }, api, extraOptions);
+      if (refreshResult?.error) {
+        api.dispatch(logout());
+        return refreshResult;
+      }
 
-  if (refreshResult?.data) {
-    api.dispatch(receivedToken(refreshResult.data.accessToken));
-    localStorage.setItem("accessToken", refreshResult.data.accessToken);
+      // Retry the original request after refreshing the token
+      result = await baseQuery(args, api, extraOptions);
+    }
 
-    result = await baseQuery(args, api, extraOptions);
-  } else {
-    api.dispatch(logout());
-  }
-}
-return result;
-    },
-    endpoints: builder => ({})
-})
+    return result;
+  },
+  endpoints: (builder) => ({}),
+});

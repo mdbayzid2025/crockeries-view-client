@@ -149,7 +149,7 @@
   }
   
   .orderTable th {
-    text-align: left;
+    text-align: center;
     padding: 0.75rem 1rem;
     background-color: #f1f5f9;
     color: #475569;
@@ -185,12 +185,13 @@
   .quantityControl {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
   }
   
   .quantityBtn {
-    width: 28px;
-    height: 28px;
+    width: 35px;
+    height: 100%;
     border-radius: 4px;
     border: 1px solid #cbd5e1;
     background: white;
@@ -199,6 +200,7 @@
     justify-content: center;
     cursor: pointer;
     font-weight: bold;
+    color: black;
   }
   
   .quantityBtn:hover {
@@ -322,6 +324,17 @@
     text-align: center;
   }
 
+   .qtyInput{
+    width: 80px;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #1e293b;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
 
   @media(max-width: 768px){
     .orderForm{

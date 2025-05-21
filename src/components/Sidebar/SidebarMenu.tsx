@@ -4,10 +4,7 @@ import SidebarMenuItem from './SidebarMenuItem';
 import { useShop } from '../../app/Context/ShopContext';
 import { useSelector } from 'react-redux';
 
-// Simulated auth check (replace this with your actual auth logic)
-const isAuthenticated = () => {
-  return !!localStorage.getItem('accessToken');
-};
+
 
 const menuItems = [
   { name: 'dashboard', icon: 'bx bx-grid-alt', text: 'Dashboard', path: '/dashboard', authRequired: true },

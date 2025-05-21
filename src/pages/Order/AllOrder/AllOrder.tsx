@@ -123,6 +123,7 @@ const handleDelete = async (id: string) => {
                   <th>Category</th>
                   <th>Brand</th>
                   <th>Unit</th>
+                  <th>Qty</th>
                   <th>Price</th>
                   <th>Discount</th>
                   <th>Amount</th>
@@ -139,27 +140,28 @@ const handleDelete = async (id: string) => {
                     <td>{item.category}</td>
                     <td>{item.brand}</td>
                     <td>{item.unit}</td>
-                    <td>{item.price}</td>
-                    <td>{item.discount}</td>
-                    <td>{item.total}</td>
+                    <td>{item.quantity}</td>
+                    <td>{item.price.toFixed(2)}</td>
+                    <td>{item.discount.toFixed(2)}</td>
+                    <td>{item.total.toFixed(2)}</td>
                   </tr>
                 ))}
 
                 {/* -------- Summary Row -------- */}
                 <tr>
-                  <td colSpan={9}>
+                  <td colSpan={10}>
                     <div className={styles.wrapper}>
                       <div className={styles.itemRow}>
                         <p className={styles.label}>Subtotal</p>
-                        <p className={styles.value}>{order.sub_total}</p>
+                        <p className={styles.value}>{order.sub_total.toFixed(2)}</p>
                       </div>
                       <div className={styles.itemRow}>
                         <p className={styles.label}>Discount</p>
-                        <p className={styles.value}>{order.discount}</p>
+                        <p className={styles.value}>{order.discount.toFixed(2)}</p>
                       </div>
                       <div className={styles.totalContainer}>
                         <p className={styles.totalLabel}>Net Total</p>
-                        <p className={styles.totalValue}>{order.net_total}</p>
+                        <p className={styles.totalValue}>{order.net_total.toFixed(2)}</p>
                       </div>
                     </div>
                   </td>

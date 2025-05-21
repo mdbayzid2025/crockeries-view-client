@@ -15,6 +15,7 @@ const LogIn = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  
   const handleLogin = async e =>{
     e.preventDefault()
     const form = e.target;
@@ -28,8 +29,7 @@ const LogIn = () => {
       const result = await login(data).unwrap();
       // Handle successful login
       console.log("result", result);
-      setToken(true);
-      localStorage.setItem("accessToken", result?.token)
+      setToken(true);      
       dispatch(setCredentials(result));
       navigate("/")
     } catch (err) {
