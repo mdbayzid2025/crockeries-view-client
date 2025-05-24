@@ -10,7 +10,7 @@ import ConfirmationModal from '../Shared/ConfirmationModal';
 import useConfirmationModal from '../../hooks/useConfirmationModal';
 
 
-const AddProduct = () => {
+const AddProduct = ({setSelectTab}) => {
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -107,30 +107,6 @@ const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useC
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = async(e:any) => {
-    setLoading(!loading);
-    const file = e.target.files[0];
-    if(!file) return;      
-    if (file) {
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", "crockeries-view");
-      data.append("cloud_name", "dxspmmowc");
-
-      const response = await fetch("https://api.cloudinary.com/v1_1/dxspmmowc/image/upload", {
-        method: "POST",
-        body: data,
-
-      })
-
-      const uploadedImageUrl = await response.json();
-      
-      setImagePreview(uploadedImageUrl?.url)
-      setLoading(false);
-      setFormData(prev => ({ ...prev, image: uploadedImageUrl?.url }));        
-    }
-  };
-
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
@@ -145,10 +121,22 @@ const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useC
 
   const handleSubmit = async (e:any) => {
     e.preventDefault();
-
+    
+       const submissionProductData = new FormData();
+    
+    Object.entries(formData).forEach(([key, value]) => {
+      // Only append if photo is a File or for all other fields
+      if (key === "image" && value instanceof File) {
+        submissionProductData.append(key, value);
+      } else if (key !== "image") {
+        submissionProductData.append(key, value);
+      }
+    });
+    
     try {
-      const result = await addProduct(formData);
+      const result = await addProduct(submissionProductData);
       console.log(result);
+      setSelectTab("All Products")
     } catch (error) {
       console.log(error);
     }    
@@ -223,6 +211,17 @@ const handleUpdateCategory = async () => {
       // Handle error
       console.log(err?.data?.message);
     } 
+  }
+};
+
+const handleImageChange = (e: any) => {
+  const file = e.target.files[0];
+  if (file) {
+    setFormData((prevData) => ({
+      ...prevData,
+      image: file,
+    }));
+    setImagePreview(URL.createObjectURL(file));
   }
 };
 

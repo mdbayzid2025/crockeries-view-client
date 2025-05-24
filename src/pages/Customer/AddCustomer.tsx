@@ -25,29 +25,29 @@ const AddCustomer = () => {
       setFormData(prev => ({ ...prev, [name]: value }));
     };
   
-    const handleImageChange = async(e:any) => {
-      setLoading(!loading);
-      const file = e.target.files[0];
-      if(!file) return;      
-      if (file) {
-        const data = new FormData();
-        data.append("file", file);
-        data.append("upload_preset", "crockeries-view");
-        data.append("cloud_name", "dxspmmowc");
+    // const handleImageChange = async(e:any) => {
+    //   setLoading(!loading);
+    //   const file = e.target.files[0];
+    //   if(!file) return;      
+    //   if (file) {
+    //     const data = new FormData();
+    //     data.append("file", file);
+    //     data.append("upload_preset", "crockeries-view");
+    //     data.append("cloud_name", "dxspmmowc");
 
-        const response = await fetch("https://api.cloudinary.com/v1_1/dxspmmowc/image/upload", {
-          method: "POST",
-          body: data,
+    //     const response = await fetch("https://api.cloudinary.com/v1_1/dxspmmowc/image/upload", {
+    //       method: "POST",
+    //       body: data,
 
-        })
+    //     })
 
-        const uploadedImageUrl = await response.json();
+    //     const uploadedImageUrl = await response.json();
         
-        setImagePreview(uploadedImageUrl?.url)
-        setLoading(false);
-        setFormData(prev => ({ ...prev, photo: uploadedImageUrl?.url }));        
-      }
-    };
+    //     setImagePreview(uploadedImageUrl?.url)
+    //     setLoading(false);
+    //     setFormData(prev => ({ ...prev, photo: uploadedImageUrl?.url }));        
+    //   }
+    // };
   
     const triggerFileInput = () => {
       fileInputRef.current.click();
@@ -61,19 +61,60 @@ const AddCustomer = () => {
       }
     };
   
-    const handleSubmit = async (e:any) => {
-      e.preventDefault();
+    const handleSubmit = async (e: any) => {
+  e.preventDefault();
+
+  try {
+    const submissionData = new FormData();
     
-      // Add your form submission logic here
+    Object.entries(formData).forEach(([key, value]) => {
+      // Only append if photo is a File or for all other fields
+      if (key === "photo" && value instanceof File) {
+        submissionData.append(key, value);
+      } else if (key !== "photo") {
+        submissionData.append(key, value);
+      }
+    });
+    
+    // Append file if selected
+    if (formData.photo) {
+      submissionData.append("photo", formData.photo);
+    }
+
+
+    const result = await addCustomer(submissionData); // Redux Toolkit mutation hook
+    console.log("Customer Added:", result);
+  } catch (error) {
+    console.log("Add Customer Error:", error);
+  }
+};
+
+const handleImageChange = (e: any) => {
+  const file = e.target.files[0];
+  if (file) {
+    setFormData((prevData) => ({
+      ...prevData,
+      photo: file,
+    }));
+    setImagePreview(URL.createObjectURL(file));
+  }
+};
+
+
+
+    // const handleSubmit = async (e:any) => {
+    //   e.preventDefault();
+    
+    //   // Add your form submission logic here
       
-        try {
-          const result = await addCustomer(formData);
-          console.log(result);
-        } catch (error) {
-          console.log(error);
-        }
-      localStorage.setItem('client', JSON.stringify(formData))
-    }; 
+    //     try {
+    //       const result = await addCustomer(formData);
+    //       console.log(result);
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   localStorage.setItem('client', JSON.stringify(formData))
+    // }; 
   return (
     <div className={styles.formContainer}>
     <div className={styles.formCard}>

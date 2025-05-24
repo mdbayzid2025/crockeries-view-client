@@ -5,20 +5,23 @@ import { useEffect, useState } from 'react';
 import { useShop } from '../app/Context/ShopContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../app/features/authSlice';
+import { useSignOutMutation } from '../app/features/authService';
+
 
 
 
 
 
 const ThemeToggle = () => {
-  // Simulated auth check (replace this with your actual auth logic)  
+  const [signOut, { isLoading, isError, error }] = useSignOutMutation();
 
-// const {token, setToken} = useShop();
 const isAuthenticated = useSelector(state=>state.auth.isAuthenticated);
 const dispatch = useDispatch()
 
 const navigate = useNavigate();
-const handleLogout = () =>{
+const handleLogout = async () =>{
+   await signOut().unwrap();
+  console.log("signout")
   dispatch(logout())
   navigate("/login");
 }

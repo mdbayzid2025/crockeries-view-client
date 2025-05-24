@@ -18,7 +18,7 @@ export const productApiSlice = apiSlice.enhanceEndpoints({addTagTypes: ['Product
         method: "PUT",
         body: rest,
       }),
-      providesTags: ['Products']
+      invalidatesTags: ['Products'],
     }),
     deleteProduct: builder.mutation({
       query: (id)=>({

@@ -165,7 +165,7 @@ const handleDelete = async (id: string) => {
         </table>
         </div>
         }
-        {selected === 'Add Product' && <AddProduct />}                      
+        {selected === 'Add Product' && <AddProduct setSelectTab={setSelectTab} />}                      
         {/* {selected === 'Add Product' && <ProductForm2 />} */}
     
         <ConfirmationModal

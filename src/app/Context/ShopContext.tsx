@@ -53,6 +53,13 @@ const [shop, setShop] = useState<any>(null);
   },[data])
   
 
+  const signOut  = async()=>{
+try {
+  
+} catch (error) {
+  
+}
+  }
   return (
     <ShopContext.Provider
       value={{

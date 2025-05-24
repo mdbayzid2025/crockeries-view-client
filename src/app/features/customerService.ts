@@ -26,7 +26,7 @@ export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']})
         method: 'PUT',
         body: customerData,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Customer', id }],
+      invalidatesTags: ['Customer'],
     }),
     deleteCustomer: builder.mutation({
       query: (id) => ({

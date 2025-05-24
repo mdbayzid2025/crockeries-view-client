@@ -39,7 +39,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order', 'ShopI
         method: 'PUT',
         body: {status},
       }),
-      invalidatesTags: ['Order'],
+    invalidatesTags: ['Order'],
     }),
     deleteOrder: builder.mutation({
       query: (id) => ({

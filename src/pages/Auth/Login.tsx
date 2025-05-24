@@ -28,13 +28,10 @@ const LogIn = () => {
     try {
       const result = await login(data).unwrap();
       // Handle successful login
-      console.log("result", result);
-      setToken(true);      
+      console.log("result", result);      
       dispatch(setCredentials(result));
       navigate("/")
     } catch (err) {
-      // Handle error
-      // alert(err)
       console.log("rrrr", err)
     }
   }

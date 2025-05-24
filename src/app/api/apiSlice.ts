@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logout } from "../features/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/api/v1/",
+  baseUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/`,
   credentials: "include", // send cookies with each request
 });
 
@@ -21,7 +21,9 @@ export const apiSlice = createApi({
         extraOptions
       );
 
+console.log("refreshResult", refreshResult)
       if (refreshResult?.error) {
+        await baseQuery({url: "auth/logout",method: "GET",},api,extraOptions)
         api.dispatch(logout());
         return refreshResult;
       }

@@ -13,6 +13,7 @@ export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).inject
         body: credentials,
       }),
     }),
+   
     register: builder.mutation({
       query: (userData) => ({
         url: 'auth/register',
@@ -20,12 +21,14 @@ export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).inject
         body: userData,
       }),
     }),
-    logout: builder.mutation({
-      query: () => ({
-        url: 'auth/logout',
-        method: 'POST',
-      }),
+    signOut: builder.mutation({
+    query: () => ({
+      url: 'auth/logout',
+      method: 'POST',
+      credentials: 'include', // include cookies
     }),
+}),
+
     getCurrentUser: builder.query({
       query: () => 'me',
     }),
@@ -35,7 +38,7 @@ export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).inject
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useLogoutMutation,
+  useSignOutMutation,
   useGetCurrentUserQuery,
 } = authApi;
 
