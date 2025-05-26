@@ -21,7 +21,7 @@ const SidebarHeader = ({ isOpen, toggleSidebar,   setIsClose, isClose }) => {
         {isOpen && (
           <div className={styles.text}>
             <span className={styles.name}>{shop?.site_name}</span>
-            <span className={styles.profession}>{shop?.mobile}</span>
+            {/* <span className={styles.profession}>{shop?.mobile}</span> */}
           </div>
         )}
       </div>

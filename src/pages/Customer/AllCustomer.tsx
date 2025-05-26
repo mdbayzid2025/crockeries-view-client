@@ -43,8 +43,7 @@ const AllCustomer = () => {
   };
 
  if (isLoading) return <div>Loading...</div>;
- if (isError) {
-    console.log('eeee',error?.message )
+ if (isError) {    
     return <div>Error: {error?.message}</div>
 };   
  

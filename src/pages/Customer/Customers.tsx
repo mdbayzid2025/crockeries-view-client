@@ -15,7 +15,7 @@ const Customers = () => {
     <h1>AllCustomer</h1>
       <TabHeader tabs={tabs} selected={selected} setSelectTab={setSelectTab}/>
       {selected === 'All Customer' && <AllCustomer />}
-      {selected === 'Add Customer' && <AddCustomer />}
+      {selected === 'Add Customer' && <AddCustomer  setSelectTab={setSelectTab}/>}
       </div>
   )
 }

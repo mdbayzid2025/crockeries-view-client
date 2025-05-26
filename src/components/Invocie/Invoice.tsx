@@ -170,7 +170,7 @@ if(loadiding){
                             <tbody>
                               <tr>
                                 <td className={`${styles.borderB} `}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>Net total:</div>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.textSlate400}`}>Sub total:</div>
                                 </td>
                                 <td className={`${styles.borderB}  ${styles.textRight}`}>
                                   <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textMain}`}>{ordersInfo?.sub_total.toFixed(2)}</div>
@@ -186,7 +186,7 @@ if(loadiding){
                               </tr>
                               <tr>
                                 <td className={`${styles.bgMain} `}>
-                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>Total:</div>
+                                  <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>Net Total:</div>
                                 </td>
                                 <td className={`${styles.bgMain}  ${styles.textRight}`}>
                                   <div className={`${styles.whitespaceNowrap} ${styles.fontBold} ${styles.textWhite}`}>{ordersInfo?.net_total.toFixed(2)}</div>

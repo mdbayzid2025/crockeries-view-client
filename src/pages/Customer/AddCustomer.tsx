@@ -3,10 +3,10 @@ import styles from '../../theme/exports/_form.module.css'
 import ImageUploadSpinner from '../../components/Common/ImageUploadSpinner/ImageUploadSpinner';
 import { useAddCustomerMutation } from '../../app/features/customerService';
 
-const AddCustomer = () => {
+const AddCustomer = ({setSelectTab}) => {
   const [formData, setFormData] = useState({
       name: '',
-      code: '',
+      // code: '',
       address: '',
       district: '',
       mobile: '',
@@ -25,29 +25,6 @@ const AddCustomer = () => {
       setFormData(prev => ({ ...prev, [name]: value }));
     };
   
-    // const handleImageChange = async(e:any) => {
-    //   setLoading(!loading);
-    //   const file = e.target.files[0];
-    //   if(!file) return;      
-    //   if (file) {
-    //     const data = new FormData();
-    //     data.append("file", file);
-    //     data.append("upload_preset", "crockeries-view");
-    //     data.append("cloud_name", "dxspmmowc");
-
-    //     const response = await fetch("https://api.cloudinary.com/v1_1/dxspmmowc/image/upload", {
-    //       method: "POST",
-    //       body: data,
-
-    //     })
-
-    //     const uploadedImageUrl = await response.json();
-        
-    //     setImagePreview(uploadedImageUrl?.url)
-    //     setLoading(false);
-    //     setFormData(prev => ({ ...prev, photo: uploadedImageUrl?.url }));        
-    //   }
-    // };
   
     const triggerFileInput = () => {
       fileInputRef.current.click();
@@ -61,33 +38,28 @@ const AddCustomer = () => {
       }
     };
   
-    const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: any) => {
   e.preventDefault();
 
   try {
     const submissionData = new FormData();
-    
+
     Object.entries(formData).forEach(([key, value]) => {
-      // Only append if photo is a File or for all other fields
       if (key === "photo" && value instanceof File) {
-        submissionData.append(key, value);
-      } else if (key !== "photo") {
+        submissionData.append("photo", value); // ✅ Append only once
+      } else {
         submissionData.append(key, value);
       }
     });
-    
-    // Append file if selected
-    if (formData.photo) {
-      submissionData.append("photo", formData.photo);
-    }
 
-
-    const result = await addCustomer(submissionData); // Redux Toolkit mutation hook
+    const result = await addCustomer(submissionData).unwrap();
     console.log("Customer Added:", result);
+    setSelectTab("All Customer")
   } catch (error) {
     console.log("Add Customer Error:", error);
   }
 };
+
 
 const handleImageChange = (e: any) => {
   const file = e.target.files[0];
@@ -184,7 +156,8 @@ const handleImageChange = (e: any) => {
             onChange={handleChange}
             placeholder="e.g., Floral Porcelain Tea Cup Set"
             className={styles.input}
-            required
+            // required
+            disabled
           />
         </div>
 

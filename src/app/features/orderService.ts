@@ -26,13 +26,14 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order', 'ShopI
     }),
     
     updateOrder: builder.mutation({
-      query: ({ id, ...orderData }) => ({
+      query: ({ id, ...orderData })=> ({
         url: `orders/${id}`,
         method: 'PUT',
         body: orderData,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Order', id }],
+      invalidatesTags: ['Order'],
     }),
+
     updateOrderStatus: builder.mutation({
       query: ({ id, status }) => ({
         url: `orders/${id}/status`,
