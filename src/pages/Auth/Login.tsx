@@ -1,40 +1,45 @@
-
-import { useDispatch } from 'react-redux';
-import { useShop } from '../../app/Context/ShopContext';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../../app/features/authService';
 import styles from './Login.module.css';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { setCredentials } from '../../app/features/authSlice';
+import { RootState } from '../../app/store';
+import { useEffect } from 'react';
 
-
-
-const LogIn = () => {
-  const {setToken} = useShop();
-  const [login, {isLoading, isError}] = useLoginMutation()
+const LogIn = () => {  
+  const [login, {isLoading, isError}] = useLoginMutation();
   
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
   
-  const handleLogin = async e =>{
-    e.preventDefault()
-    const form = e.target;
 
-    const data = {
-      email: form.email.value,
-      password: form.password.value,
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
     }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+
+    const data: any = {
+      email: (form.elements.namedItem('email') as HTMLInputElement).value,
+      password: (form.elements.namedItem('password') as HTMLInputElement).value,
+    };
+
     try {
-      const result = await login(data).unwrap();
-      // Handle successful login
-      console.log("result", result);      
+      const result = await login(data).unwrap();      
       dispatch(setCredentials(result));
-      navigate("/")
-    } catch (err) {
-      console.log("rrrr", err)
+      navigate("/");
+    } catch (err: any) {
+      console.log("rrrr", err);
     }
-  }
+  };
+
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginForm}>
@@ -60,11 +65,11 @@ const LogIn = () => {
               className={styles.input}
             />
           </div>
-          <button type="submit" className={styles.button}>Login</button>
-        </form>
-        <p className={styles.text}>
-          Don't have an account? <Link to="/signup" className={styles.link}>Sign up</Link>
-        </p>
+          <button type="submit" className={styles.button} disabled={isLoading}>
+            {isLoading ? "Logging In..." : "Login / Signup"}
+          </button>
+          {isError && <p className={styles.errorText}>Login failed. Please check your credentials.</p>}
+        </form>        
       </div>
     </div>
   );

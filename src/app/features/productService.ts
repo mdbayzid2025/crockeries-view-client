@@ -12,7 +12,7 @@ export const productApi = createApi({
     }),
     getProductById: builder.query({
       query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Product', id }],
+      providesTags: ( id) => [{ type: 'Product', id }],
     }),
     createProduct: builder.mutation({
       query: (productData) => ({
@@ -28,7 +28,7 @@ export const productApi = createApi({
         method: 'PUT',
         body: productData,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Product', id }],
+      invalidatesTags: ({ id }) => [{ type: 'Product', id }],
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({

@@ -14,7 +14,7 @@ export const orderApi = apiSlice.enhanceEndpoints({addTagTypes: ['Order', 'ShopI
 
     getOrderById: builder.query({
       query: (id) => `orders/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Order', id }],
+      providesTags: ( id) => [{ type: 'Order', id }],
     }),
     createOrder: builder.mutation({
       query: (orderData) => ({

@@ -5,64 +5,55 @@ import { useDeleteOrderMutation, useGetOrdersQuery, useUpdateOrderStatusMutation
 import { Link } from 'react-router-dom';
 import useConfirmationModal from '../../../hooks/useConfirmationModal';
 import ConfirmationModal from '../../../components/Shared/ConfirmationModal';
-import emptyImg  from "../../../assets/empty_order.jpg";
+import PageSpinner from '../../../components/Shared/PageSpinner';
 
-const AllOrder = ({status}) => {
+const AllOrder = ({status}: any) => {
   const { data, isLoading, isError } = useGetOrdersQuery(status);
-  const [orders, setOrders] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useConfirmationModal()
+  const [orders, setOrders] = useState<any[]>([]);  
+  const {isOpen, showConfirmation, handleConfirm, handleCancel, modalProps} = useConfirmationModal();
   const[deleteOrder, {isLoading: orderDeleting}] = useDeleteOrderMutation();
-  const [updateOrderStatus, {isLoading:updateStatus}]= useUpdateOrderStatusMutation();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [updateOrderStatus]= useUpdateOrderStatusMutation();
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
 
   useEffect(() => {
-  
     if (data) {      
       console.log("dddd", data);
       setOrders(data);
     }
   }, [data]);
 
-  // Filter data
-  const filteredOrders = orders?.filter((order) =>
-    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase()) | order?.customer_code?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredOrders = (orders as any[])?.filter((order: any) =>
+    order.invoice_no?.toLowerCase().includes(searchTerm.toLowerCase()) || order?.customer_code?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  if (isLoading) return <p>Loading orders...</p>;
+
+  if (isLoading) return <PageSpinner />;
   if (isError) return <p>Failed to load orders.</p>;
 
-
-  // ---------- Handle Delete ------------
-const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string) => {
     const shouldDelete = await showConfirmation({
       title: 'Delete Item',
       message: 'Are you sure you want to delete this order?',
       confirmText: 'Delete',
+      cancelText: 'Cancel',
     });
     
     if (shouldDelete) {
-      // Perform delete action
       try {
-        const result = await deleteOrder(id);  
-  
-        console.log("delete r", result)
-      } catch (error) {
-        console.log('Item deleted:', error);
+        const result = await deleteOrder(id).unwrap();
+        console.log("delete result:", result);
+      } catch (error: any) {
+        console.log('Item deletion failed:', error?.data?.message || error?.message || 'Unknown error');
       }        
-      }
+    }
   };
 
-  // ---------- Handle Delete ------------
-  const handleUpdateStatus = async (id: string, e: any) => {
+  const handleUpdateStatus = async (id: string, e: React.ChangeEvent<HTMLSelectElement>) => {
     try {
-      // const status = e.target.value;  
-      // Call the update order status function with the selected status and orderId
-      const result = await updateOrderStatus({ id, status: e.target.value});
-  
+      const result = await updateOrderStatus({ id, status: e.target.value}).unwrap();
       console.log("Update result:", result);
-    } catch (error) {
-      console.log("Error updating status:", error);
+    } catch (error: any) {
+      console.log("Error updating status:", error?.data?.message || error?.message || 'Unknown error');
     }
   };
 
@@ -75,14 +66,13 @@ const handleDelete = async (id: string) => {
             type="text"
             placeholder="Search by Order Number.."
             className={styles.input}
-            onChange={(e)=>setSearchTerm(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
-      {filteredOrders?.length > 0 ? filteredOrders.map((order, index) => (
+      {filteredOrders?.length > 0 ? filteredOrders.map((order: any, index: number) => (
         <div key={index}>
-          {/* -------- Order Header -------- */}
           <div className={styles.orderHeader}>
             <div className={styles.leftContant}>
               <p className={styles.customer}>
@@ -96,13 +86,13 @@ const handleDelete = async (id: string) => {
               <div className={styles.btnContainer}>
               <Link to={`/invoice/${order._id}`} className={styles.printButton}>Print</Link>
               <Link to={`/order/${order._id}`} className={styles.editButton}>Edit</Link>
-              <a onClick={()=>handleDelete(order?._id)} className={styles.deleteButton}>{orderDeleting ? "Deleting" : "Delete"}</a>
+              <a onClick={() => handleDelete(order?._id)} className={styles.deleteButton}>{orderDeleting ? "Deleting" : "Delete"}</a>
               </div>
               
               <h3>Order No : {order?.invoice_no}</h3>
               <div className={styles.statusContainer}>
                 <p className={styles.status}>Status: <span>{order.status}</span></p>
-                <select onChange={(e) => handleUpdateStatus(order._id, e)} name="status" defaultValue={order.status}>
+                <select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleUpdateStatus(order._id, e)} name="status" defaultValue={order.status}>
                   <option disabled value={status}>Change</option>
                   <option value="rough">Rough</option>
                   <option value="ladger">Ladger</option>
@@ -112,7 +102,6 @@ const handleDelete = async (id: string) => {
             </div>
           </div>
 
-          {/* -------- Table -------- */}
           <div className={styles.pageTable}>
             <table>
               <thead>
@@ -130,7 +119,7 @@ const handleDelete = async (id: string) => {
                 </tr>
               </thead>
               <tbody>
-                {order.order_items.map(item => (
+                {order.order_items.map((item: any) => (
                   <tr key={item._id}>
                     <td>
                       <img src={item.image} alt={item.name} className={styles.tableImage} />
@@ -147,7 +136,6 @@ const handleDelete = async (id: string) => {
                   </tr>
                 ))}
 
-                {/* -------- Summary Row -------- */}
                 <tr>
                   <td colSpan={10}>
                     <div className={styles.wrapper}>
@@ -170,45 +158,30 @@ const handleDelete = async (id: string) => {
             </table>
           </div>
         </div>
-      )): 
+      )) : 
       <>
-      <div className={styles.emptycontainer}>
-            <div className={styles.box}>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
-                alt="Empty Box"
-                className={styles.image}
-              />
-              <h2 className={styles.title}>No Orders Yet</h2>
-              <p className={styles.subtitle}>Your recent orders will appear here once available.</p>
-            </div>
+        <div className={styles.emptycontainer}>
+          <div className={styles.box}>
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
+              alt="Empty Box"
+              className={styles.image}
+            />
+            <h2 className={styles.title}>No Orders Yet</h2>
+            <p className={styles.subtitle}>Your recent orders will appear here once available.</p>
           </div>
-            {/* <div className={styles.emptyOrderContainer}>
-              
-              <img 
-                  src={emptyImg} 
-                  alt="No orders illustration" 
-                  className={styles.emptyIllustration}/>
-              <h2>No Orders Yet</h2>
-              <p>When you create orders, they'll appear here. Get started by creating your first order.</p>
-              <button className={styles.addOrderBtn} >Create New Order</button>
-              
-              <div className={styles.attribution}>
-                  Illustration by <a href="https://www.freepik.com/" target="_blank">Freepik</a>
-              </div>
-          </div> */}
+        </div>
       </>
-     
       }      
-                       <ConfirmationModal
-                       isOpen={isOpen}
-                       title={modalProps.title}
-                       message={modalProps.message}
-                       confirmText={modalProps.confirmText}
-                       cancelText={modalProps.cancelText}
-                       onConfirm={handleConfirm}
-                       onCancel={handleCancel}
-                     />
+        <ConfirmationModal
+          isOpen={isOpen}
+          title={modalProps.title || 'Confirm Action'}
+          message={modalProps.message || 'Are you sure?'}
+          confirmText={modalProps.confirmText || 'Yes'}
+          cancelText={modalProps.cancelText || 'No'}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
     </div>
   );
 };

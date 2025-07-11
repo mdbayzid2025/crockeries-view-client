@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+
 import Sidebar from '../components/Sidebar'
 import { Outlet } from 'react-router-dom'
 import styles from './MainLayout.module.css';
 import MobileHeader from '../components/MobileHeader/MobileHeader';
+import { useState } from 'react';
 
 
 const MainLayout = () => {
@@ -36,7 +37,7 @@ const MainLayout = () => {
         <div className={styles.MobileHeader}>
           <MobileHeader isClose={isClose} setIsClose={setIsClose}/>        
         </div>
-        <div className={styles.content}  style={{padding: '20px' }}>          
+        <div className={styles.content}>          
             <Outlet />
         </div>
     </div>

@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from '../../theme/exports/_form.module.css';
-import ImageUploadSpinner from '../../components/Common/ImageUploadSpinner/ImageUploadSpinner';
 import { useGetCustomerByIdQuery, useUpdateCustomerMutation } from '../../app/features/customerService';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const UpdateCustomer = () => {
-  const { id } = useParams(); // Get customer ID from URL
+  const { id } = useParams<{ id: string }>();
   const { data: customerData, isLoading: isFetching } = useGetCustomerByIdQuery(id);
   const [updateCustomer, { isLoading: isUpdating }] = useUpdateCustomerMutation();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     name: '',
     code: '',
     address: '',
@@ -19,69 +18,81 @@ const UpdateCustomer = () => {
     photo: null
   });
 
-  const [imagePreview, setImagePreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);  
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (customerData) {
-        console.log(customerData)
-      setFormData(customerData?.data);
-      setImagePreview(customerData?.data?.photo || null);
+    if (customerData?.data) {
+      setFormData((prev: any) => ({
+        ...prev,
+        name: customerData.data.name || '',
+        code: customerData.data.code || '',
+        address: customerData.data.address || '',
+        district: customerData.data.district || '',
+        mobile: customerData.data.mobile || '',
+        trade_license: customerData.data.trade_license || '',
+        photo: customerData.data.photo || null,
+      }));
+      setImagePreview(customerData.data.photo || null);
     }
   }, [customerData]);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = async (e: any) => {
-    setLoading(true);
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const data = new FormData();
-    data.append("file", file);
-    data.append("upload_preset", "crockeries-view");
-    data.append("cloud_name", "dxspmmowc");
 
-    const response = await fetch("https://api.cloudinary.com/v1_1/dxspmmowc/image/upload", {
-      method: "POST",
-      body: data,
-    });
-
-    const uploadedImageUrl = await response.json();
-    setImagePreview(uploadedImageUrl?.url);
-    setFormData(prev => ({ ...prev, photo: uploadedImageUrl?.url }));
-    setLoading(false);
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFormData((prevData: any) => ({
+        ...prevData,
+        photo: file,
+      }));
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   const triggerFileInput = () => {
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const removeImage = () => {
-    setFormData(prev => ({ ...prev, photo: null }));
+    setFormData((prev: any) => ({ ...prev, photo: null }));
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const updateCustomerData = new FormData();
+
+  Object.entries({...formData, id}).forEach(([key, value]) => {
+    if (key === "photo" && value instanceof File) {
+      updateCustomerData.append(key, value);
+    } else if (value !== null && value !== undefined) {
+      updateCustomerData.append(key, value.toString());
+    }
+  });
+
     try {
-      await updateCustomer({ id, ...formData });
-      navigate("/customers")
-    } catch (error) {
-      console.error("Update failed:", error);
+      await updateCustomer(updateCustomerData).unwrap();
+      navigate("/customers");
+    } catch (error: any) {
+      console.error("Update failed:", error?.data?.message || error?.message || 'Unknown error');
     }
   };
 
   if (isFetching) return <p>Loading customer data...</p>;
+  if (!customerData?.data) return <p>Customer not found or an error occurred.</p>;
 
   return (
     <div className={styles.formContainer}>
@@ -92,8 +103,7 @@ const UpdateCustomer = () => {
           {/* Image Upload */}
           <div className={styles.formGroup}>
             <label style={{ textAlign: 'center', fontSize: '25px' }} className={styles.label}>Profile</label>
-            <div className={styles.profileImageContainer}>
-              {loading ? <ImageUploadSpinner /> : (
+            <div className={styles.profileImageContainer}>              
                 <>
                   {imagePreview ? (
                     <div className={styles.profileImageWrapper}>
@@ -112,7 +122,7 @@ const UpdateCustomer = () => {
                     </div>
                   )}
                 </>
-              )}
+              
               <input
                 type="file"
                 ref={fileInputRef}
@@ -127,7 +137,7 @@ const UpdateCustomer = () => {
           <div className={styles.doubleInput}>
             <div className={styles.formGroup}>
               <label htmlFor="code" className={styles.label}>Party Code*</label>
-              <input type="text" id="code" name="code" value={formData.code} onChange={handleChange} className={styles.input} required />
+              <input type="text" id="code" name="code" value={formData.code || ''} onChange={handleChange} className={styles.input} required />
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="name" className={styles.label}>Customer Name*</label>
@@ -159,7 +169,7 @@ const UpdateCustomer = () => {
 
           <div className={styles.formActions}>
             <button type="submit" className={styles.submitButton} disabled={isUpdating}>
-              {isUpdating ? 'Updating...' : 'Update Customer'}
+            Update
             </button>
           </div>
         </form>

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import styles from './ButtonLoader.module.css';
 
 const ButtonLoader = () => {

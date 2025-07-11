@@ -1,11 +1,11 @@
 import { AiOutlineLogout } from 'react-icons/ai';
-import styles from './ThemeToggle.module.css';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useShop } from '../app/Context/ShopContext';
+import styles from './ThemeToggle.module.css';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../app/features/authSlice';
 import { useSignOutMutation } from '../app/features/authService';
+import { logout } from '../app/features/authSlice';
+import { RootState } from '../app/store';
 
 
 
@@ -13,15 +13,14 @@ import { useSignOutMutation } from '../app/features/authService';
 
 
 const ThemeToggle = () => {
-  const [signOut, { isLoading, isError, error }] = useSignOutMutation();
+  const [signOut ] = useSignOutMutation();
 
-const isAuthenticated = useSelector(state=>state.auth.isAuthenticated);
+const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 const dispatch = useDispatch()
 
 const navigate = useNavigate();
 const handleLogout = async () =>{
-   await signOut().unwrap();
-  console.log("signout")
+   await signOut(null).unwrap();  
   dispatch(logout())
   navigate("/login");
 }

@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import styles from './AddOrder.module.css';
-import { useGetProductsQuery } from '../../../app/features/productSlice';
+import React, { useEffect, useState } from 'react';
 import { useGetCustomersQuery } from '../../../app/features/customerService';
 import { useCreateOrderMutation } from '../../../app/features/orderService';
+import { useGetProductsQuery } from '../../../app/features/productSlice';
 import ButtonLoader from '../../../components/Shared/ButtonLoader';
+import styles from './AddOrder.module.css';
 
 
-const AddOrder = ({setSelectTab}) => {
-  const [formData, setFormData] = useState({
+const AddOrder = ({setSelectTab}: any) => { // setSelectTab can be typed as (tab: string) => void
+  const [formData, setFormData] = useState<any>({ // Type formData state as any
     customer_code: '',
     customer_name: '',
     mobile: '',
@@ -17,23 +17,22 @@ const AddOrder = ({setSelectTab}) => {
     items: [],
   });
 
-
-  const { data, error, isLoading } = useGetProductsQuery();
-  const { data: customers, isLoading: loadingCustomers, isError: errorCustomers, refetch } = useGetCustomersQuery();
+  const { data, } = useGetProductsQuery(null); // Pass undefined to useGetProductsQuery
+  const { data: customers,  } = useGetCustomersQuery(null); // Pass undefined to useGetCustomersQuery
   const [createOrder, {isLoading: orderLoading }] = useCreateOrderMutation()
-  const [searchTerm, setSearchTerm] = useState('');
-  const [customerSearchTerm, setCustomerSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>(''); // Explicitly type searchTerm as string
+  const [customerSearchTerm, setCustomerSearchTerm] = useState<string>(''); // Explicitly type customerSearchTerm as string
+  const [searchResults, setSearchResults] = useState<any[]>([]); // Type searchResults as any array
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false); // Explicitly type boolean
 
-  const [searchCustomerResults, setSearchCustomerResults] = useState([]);
-  const [showCustomerSearchResults, setShowCustomerSearchResults] = useState(false);
+  const [searchCustomerResults, setSearchCustomerResults] = useState<any[]>([]); // Type searchCustomerResults as any array
+  const [showCustomerSearchResults, setShowCustomerSearchResults] = useState<boolean>(false); // Explicitly type boolean
 
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false); // Explicitly type loading as boolean
 
   // --------------- Customer Filter Section -----------------
 
-  const handleSearchCustomer = (e) => {
+  const handleSearchCustomer = (e: React.ChangeEvent<HTMLInputElement>) => { // Type event as React.ChangeEvent<HTMLInputElement>
     const value = e.target.value;
     setCustomerSearchTerm(value);
   
@@ -43,7 +42,7 @@ const AddOrder = ({setSelectTab}) => {
       return;
     }
   
-    const results = customers?.data?.filter(customer =>
+    const results = (customers?.data as any[])?.filter((customer: any) => // Cast customers.data and type customer as any
       customer.code?.toLowerCase().includes(value.toLowerCase()) ||
       customer.name?.toLowerCase().includes(value.toLowerCase())
     );  
@@ -51,8 +50,8 @@ const AddOrder = ({setSelectTab}) => {
     setShowCustomerSearchResults(true);
   };
 
-  const selectCustomer = (customer) => {
-    setFormData(prev => ({
+  const selectCustomer = (customer: any) => { // Type customer as any
+    setFormData((prev: any) => ({ // Type prev as any
       ...prev,
       customer_code: customer.code,
       customer_name: customer.name,
@@ -67,17 +66,16 @@ const AddOrder = ({setSelectTab}) => {
   // --------------- Customer Filter Section End -----------------
 
 
-
   // Calculate order summary
-  const [summary, setSummary] = useState({
+  const [summary, setSummary] = useState<any>({ // Type summary as any
     subTotal: 0,
     totalDiscount: 0,
     netTotal: 0,
   });
 
   useEffect(() => {
-    const subTotal = formData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const totalDiscount = formData.items.reduce((sum, item) => sum + Number(item?.discount), 0);
+    const subTotal = (formData.items as any[]).reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0); // Type sum and item as any
+    const totalDiscount = (formData.items as any[]).reduce((sum: number, item: any) => sum + Number(item?.discount), 0); // Type sum and item as any
         
     setSummary({
       subTotal,
@@ -86,20 +84,20 @@ const AddOrder = ({setSelectTab}) => {
     });
   }, [formData.items]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { // Type event
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: any) => ({ ...prev, [name]: value })); // Type prev as any
   };
 
-  const handleSearch = (e) => {    
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => { // Type event 
     const term = e.target.value;
     setSearchTerm(term);
     
     if (term.length > 0) {
-      const results = data?.data.filter(product => {        
-        return product.name.toLowerCase().includes(term.toLowerCase())     
-        });        
-      setSearchResults(results);
+      const results = (data?.data as any[])?.filter((product: any) => { // Cast data.data and type product as any
+        return product.name.toLowerCase().includes(term.toLowerCase()) || product.code.toLowerCase().includes(term.toLowerCase()); 
+        });     
+      setSearchResults(results || []); // Ensure results is an array
       setShowSearchResults(true);
     } else {
       setSearchResults([]);
@@ -107,17 +105,17 @@ const AddOrder = ({setSelectTab}) => {
     }
   };
 
-  const addProduct = (product) => {
-    const existingItemIndex = formData.items.findIndex(item => item._id === product._id);    
+  const addProduct = (product: any) => { // Type product as any
+    const existingItemIndex = (formData.items as any[]).findIndex((item: any) => item._id === product._id); // Type item as any
     if (existingItemIndex >= 0) {
       const updatedItems = [...formData.items];
       updatedItems[existingItemIndex].quantity += 1;
       
-      setFormData(prev => ({ ...prev, items: updatedItems }));
+      setFormData((prev: any) => ({ ...prev, items: updatedItems })); // Type prev as any
     } else {
-      setFormData(prev => ({
+      setFormData((prev: any) => ({ // Type prev as any
         ...prev,
-        items: [...prev.items, { ...product, quantity: 1}]
+        items: [...prev.items, { ...product, quantity: 1, discount: 0 }] // Add discount with default 0
       }));
     }
     
@@ -127,7 +125,7 @@ const AddOrder = ({setSelectTab}) => {
   };
 
 
-  const updateQuantity = (index, value) => {
+  const updateQuantity = (index: number, value: string | number) => { // Type index as number, value as string | number
   // Convert value to string and remove leading zeros
   const cleanValue = String(value).replace(/^0+(?=\d)/, '');
 
@@ -137,8 +135,8 @@ const AddOrder = ({setSelectTab}) => {
     newQty = 0;
   }
 
-  setFormData(prev => {
-    const updatedItems = prev.items.map((item, i) =>
+  setFormData((prev: any) => { // Type prev as any
+    const updatedItems = (prev.items as any[]).map((item: any, i: number) => // Type item and i as any/number
       i === index ? { ...item, quantity: newQty } : item
     );
     return { ...prev, items: updatedItems };
@@ -146,40 +144,33 @@ const AddOrder = ({setSelectTab}) => {
 };
 
 
-  // const updateQuantity = (index, newQuantity) => {
-  //   if (newQuantity < 1) return;
-    
-  //   const updatedItems = [...formData.items];
-  //   updatedItems[index].quantity = newQuantity;
-  //   setFormData(prev => ({ ...prev, items: updatedItems }));
-  // };
-
-  const updateDiscount = (value, id) =>{    
-    const existingItemIndex = formData.items.findIndex(item => item._id === id);           
+  const updateDiscount = (value: string, id: string) => { // Type value as string, id as string
+    const existingItemIndex = (formData.items as any[]).findIndex((item: any) => item._id === id); // Type item as any
     // Optionally: Remove leading zero if present       
     const cleanValue = String(value).replace(/^0+(?=\d)/, '');
     
-    const updateProduct = formData.items.map((item, index)=>index === existingItemIndex ? {...item, discount: Number(cleanValue)}: item);
-    setFormData(prev => ({ ...prev, items: updateProduct }));    
+    const updateProduct = (formData.items as any[]).map((item: any, index: number) => index === existingItemIndex ? {...item, discount: Number(cleanValue)}: item); // Type item and index as any/number
+    setFormData((prev: any) => ({ ...prev, items: updateProduct })); // Type prev as any
   }
 
-  const removeItem = (index) => {
-    const updatedItems = formData.items.filter((_, i) => i !== index);
-    setFormData(prev => ({ ...prev, items: updatedItems }));
+  const removeItem = (index: number) => { // Type index as number
+    const updatedItems = (formData.items as any[]).filter((_: any, i: number) => i !== index); // Type _ and i as any/number
+    setFormData((prev: any) => ({ ...prev, items: updatedItems })); // Type prev as any
   };
 
-  const handleSubmit = async(e) => {
-    e.preventDefault()
-    setLoading(true)
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => { // Type event as React.FormEvent<HTMLFormElement>
+    e.preventDefault();
+    setLoading(true);
     
-   try {    
-    const result = await createOrder(formData)
-    console.log(result);
-    setLoading(false);
-    setSelectTab("ladger")
-   } catch (error) {
-    console.log(error?.message)
-   }    
+    try {     
+      const result = await createOrder(formData as any); // Cast formData as any for the mutation
+      console.log(result);
+      setLoading(false);
+      setSelectTab(formData?.status);
+    } catch (error: any) { // Type error as any
+      console.log(error?.message);
+      setLoading(false); // Ensure loading is set to false even on error
+    }     
   };
 
   return (
@@ -192,60 +183,60 @@ const AddOrder = ({setSelectTab}) => {
           <div className={`${styles.section} ${styles.searchContainer}`}>
             <h3 className={styles.sectionTitle}>Customer Information</h3>
             <div className={styles.doubleInput}>
-            <div >
-              <label htmlFor="customer_code">Customer Code*</label>
-              <input
-              type="text"
-              id="customer_code"
-              name="customer_code"
-              value={customerSearchTerm}
-              onChange={handleSearchCustomer}
-              placeholder="Enter customer code or name"
-              className={styles.input}
-              required
-/>
-            </div>
-            <div >
-              <label htmlFor="name">Customer Name*</label>
-              <input
+              <div >
+                <label htmlFor="customer_code">Customer Code*</label>
+                <input
                 type="text"
-                id="customer_name"
-                name="customer_name"
-                value={formData.customer_name}
+                id="customer_code"
+                name="customer_code"
+                value={customerSearchTerm}
                 onChange={handleSearchCustomer}
-                placeholder="Enter customer name"
+                placeholder="Enter customer code or name"
                 className={styles.input}
                 required
               />
-            </div>
+              </div>
+              <div >
+                <label htmlFor="name">Customer Name*</label>
+                <input
+                  type="text"
+                  id="customer_name"
+                  name="customer_name"
+                  value={formData.customer_name}
+                  onChange={handleInputChange} // Changed from handleSearchCustomer to handleInputChange for this field
+                  placeholder="Enter customer name"
+                  className={styles.input}
+                  required
+                />
+              </div>
                         
-                 {showCustomerSearchResults && (
-  <div className={styles.customerResults}>
-    {searchCustomerResults.length > 0 ? (
-      searchCustomerResults.map((customer) => (
-        <div 
-          key={customer._id} 
-          className={styles.productResult}
-          onClick={() => selectCustomer(customer)}
-        >
-          <img 
-                          src={customer.photo ??"src\assets\profile.jpg"} 
+                      {showCustomerSearchResults && (
+                <div className={styles.customerResults}>
+                  {searchCustomerResults.length > 0 ? (
+                    searchCustomerResults.map((customer: any) => ( // Type customer as any
+                      <div 
+                        key={customer._id} 
+                        className={styles.productResult}
+                        onMouseDown={() => selectCustomer(customer)} // Use onMouseDown to prevent blur from closing before click
+                      >
+                        <img 
+                          src={customer.photo ?? "src/assets/profile.jpg"} // Use forward slashes for paths
                           alt={customer.name} 
                           className={styles.productImage}
                         />
-          <div className={styles.productInfo}>
-            <h4>{customer.name} ({customer.code})</h4>
-            <p>{customer.mobile} | {customer.district}</p>
-          </div>
-        </div>
-      ))
-    ) : (
-      <div className={styles.noResults}>No customers found</div>
-    )}
-  </div>
-)}
+                        <div className={styles.productInfo}>
+                          <h4>{customer.name} ({customer.code})</h4>
+                          <p>{customer.mobile} | {customer.district}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.noResults}>No customers found</div>
+                  )}
+                </div>
+              )}
               </div>
-           
+            
               <div className={styles.doubleInput}>
               <div className={styles.inputGroup}>
               <label htmlFor="mobile">Mobile Number*</label>
@@ -259,11 +250,11 @@ const AddOrder = ({setSelectTab}) => {
                 className={styles.input}
                 required
               />
-            </div>            
+            </div>         
             <div className={styles.inputGroup}>
               <label htmlFor="address">Shipping Address*</label>
               <input
-                type="tel"
+                type="text" // Changed type to text for address
                 id="address"
                 name="address"
                 value={formData.address}
@@ -272,13 +263,13 @@ const AddOrder = ({setSelectTab}) => {
                 className={styles.input}
                 required
               />
-            </div>                          
+            </div>                       
               </div>
               <div className={styles.doubleInput}>
               <div className={styles.inputGroup}>
               <label htmlFor="district">District*</label>
               <input
-                type="tel"
+                type="text" // Changed type to text for district
                 id="district"
                 name="district"
                 value={formData.district}
@@ -302,7 +293,7 @@ const AddOrder = ({setSelectTab}) => {
                 <option value="ladger">Ladger</option>
               </select>
             </div>
-            </div>            
+            </div>         
           </div>
 
           {/* Order Items */}
@@ -324,11 +315,11 @@ const AddOrder = ({setSelectTab}) => {
               {showSearchResults && (
                 <div className={styles.searchResults}>
                   {searchResults.length > 0 ? (
-                    searchResults.map(product => (
+                    searchResults.map((product: any) => ( // Type product as any
                       <div 
-                        key={product.id} 
+                        key={product._id} // Assuming product has _id
                         className={styles.productResult}
-                        onClick={() => addProduct(product)}
+                        onMouseDown={() => addProduct(product)} // Use onMouseDown
                       >
                         <img 
                           src={product.image} 
@@ -337,7 +328,7 @@ const AddOrder = ({setSelectTab}) => {
                         />
                         <div className={styles.productInfo}>
                           <h4>{product.name}</h4>
-                          <p>₹{product.price} ({product.discount}% off)</p>
+                          <p>{product.price.toFixed(2)} ({product.discount} off)</p> {/* Ensure price and discount are numbers */}
                         </div>
                       </div>
                     ))
@@ -358,13 +349,13 @@ const AddOrder = ({setSelectTab}) => {
                      <th>Unit</th>
                      <th>Price</th>
                      <th>Discount</th>
-                      <th>Qty</th>
-                      <th>Amount</th>
-                      <th>Action</th>
+                     <th>Qty</th>
+                     <th>Amount</th>
+                     <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {formData.items.map((item, index) => (
+                    {(formData.items as any[]).map((item: any, index: number) => ( // Type item and index as any/number
                       <tr key={index}>
                         
                           <td className={styles.productCell}>
@@ -374,11 +365,11 @@ const AddOrder = ({setSelectTab}) => {
                               className={styles.itemImage}
                             />
                             <span>{item.name}</span>
-                          </td>                        
+                          </td>                       
                        <td>{item.unit}</td>
-                       <td>{item.price}</td>
+                       <td>{item.price.toFixed(2)}</td> {/* Ensure price is a number */}
                        
-                       <td><input onChange={(e)=>updateDiscount(e.target.value, item?._id)} className={styles.discountInput} defaultValue={0} type="text" placeholder='Discount'/></td>
+                       <td><input onChange={(e) => updateDiscount(e.target.value, item?._id)} className={styles.discountInput} defaultValue={0} type="text" placeholder='Discount' value={item.discount}/></td> {/* Ensure value is controlled */}
                         <td>
                       <div className={styles.quantityControl}>
                           <button 
@@ -390,9 +381,8 @@ const AddOrder = ({setSelectTab}) => {
                           </button>
                           <input 
                             className={styles.qtyInput}
-                            onChange={(e) => updateQuantity(index, e.target.value)}                                                          
-                            // onChange={(e) => updateQuantity(index, e.target.value)} 
-                            value={item?.quantity}                               
+                            onChange={(e) => updateQuantity(index, e.target.value)}                                  
+                            value={item?.quantity}                           
                             type="number" 
                             min={0}
                             placeholder="Order Qty"
@@ -407,7 +397,7 @@ const AddOrder = ({setSelectTab}) => {
                         </div>
                         </td>
                         <td>
-                          {((item.price * item.quantity) - item.discount).toFixed(2)}
+                          {((item.price * item.quantity) - item.discount).toFixed(2)} {/* Ensure price, quantity, discount are numbers */}
                         </td>
                         <td>
                           <button 
@@ -415,14 +405,13 @@ const AddOrder = ({setSelectTab}) => {
                             onClick={() => removeItem(index)}
                             className={styles.removeBtn}
                           >
-                            {/* {isMobile ? '×' : 'Remove'} */}
                             Remove
                           </button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
-                </table>               
+                </table>         
               </div>
             ) : (
               <div className={styles.emptyCart}>
@@ -452,9 +441,8 @@ const AddOrder = ({setSelectTab}) => {
 
           {/* Form Actions */}
           <div className={styles.formActions}>
-            <button type="submit" className={styles.submitBtn}>
-              
-              {loading ? <div className={styles.loadingButton}> <ButtonLoader /> &nbsp; Confirm Order</div> : 
+            <button type="submit" className={styles.submitBtn} disabled={loading || orderLoading}>
+              {loading || orderLoading ? <div className={styles.loadingButton}> <ButtonLoader /> &nbsp; Confirm Order</div> : 
               <>{formData.status === 'Draft' ? 'Save Draft' : 'Confirm Order'}</>}
             </button>
           </div>

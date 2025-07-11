@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import TabHeader from '../../hooks/TabHeader'
 import AddCustomer from './AddCustomer'
 import AllCustomer from './AllCustomer'

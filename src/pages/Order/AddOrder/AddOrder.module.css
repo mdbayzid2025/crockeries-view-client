@@ -364,7 +364,8 @@
 
   @media(max-width: 768px){
     .customerResults{
-      width: 80%;
+      width: 95%;
+      top: 25%;
     }
   }
   @media(min-width: 768px){

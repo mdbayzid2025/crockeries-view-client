@@ -1,10 +1,10 @@
 
 // features/auth/authService.js
 
-import  {apiSlice}  from '../api/apiSlice';
+import { apiSlice } from '../api/apiSlice';
 
-export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).injectEndpoints({  
-  
+export const authApi = apiSlice.enhanceEndpoints({ addTagTypes: ["User"] }).injectEndpoints({
+
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
@@ -13,7 +13,7 @@ export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).inject
         body: credentials,
       }),
     }),
-   
+
     register: builder.mutation({
       query: (userData) => ({
         url: 'auth/register',
@@ -21,14 +21,13 @@ export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).inject
         body: userData,
       }),
     }),
-    signOut: builder.mutation({
-    query: () => ({
-      url: 'auth/logout',
-      method: 'POST',
-      credentials: 'include', // include cookies
-    }),
-}),
 
+    signOut: builder.mutation({
+      query: () => ({
+        url: "auth/logout",
+        method: "GET",
+      }),
+    }),
     getCurrentUser: builder.query({
       query: () => 'me',
     }),
@@ -38,7 +37,7 @@ export const authApi = apiSlice.enhanceEndpoints({addTagTypes: ["User"]}).inject
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useSignOutMutation,
+  useSignOutMutation ,
   useGetCurrentUserQuery,
 } = authApi;
 

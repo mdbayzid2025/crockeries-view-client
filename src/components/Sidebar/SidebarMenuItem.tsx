@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import styles from './SidebarMenuItem.module.css';
 
 
-const SidebarMenuItem = ({ icon, link, text, isOpen, isClose, setIsClose }) => {
+const SidebarMenuItem = ({ icon, link, text, isOpen, isClose, setIsClose }: any) => {
   const location = useLocation();
 
   // Enhanced path matching

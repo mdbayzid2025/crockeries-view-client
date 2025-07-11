@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from '../../theme/exports/_form.module.css';
 import ImageUploadSpinner from '../../components/Common/ImageUploadSpinner/ImageUploadSpinner';
-import { useCreateShopInfoMutation } from '../../app/features/orderService';
-import { useShop } from '../../app/Context/ShopContext';
+import { useShop } from '../../app/Context/ShopContext'; // Assuming useShop provides the necessary shop context and mutations
 
 const Settings = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({ // Type formData as any
     site_name: '',
     vat_no: '',
     mobile: '',
@@ -17,31 +16,28 @@ const Settings = () => {
     logo: null
   });
 
-  const [photoPreview, setPhotoPreview] = useState(null);
-  const [logoPreview, setLogoPreview] = useState(null);
-  const [loadingPhoto, setLoadingPhoto] = useState(false);
-  const [loadingLogo, setLoadingLogo] = useState(false);  
-  const photoInputRef = useRef(null);
-  const logoInputRef = useRef(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null); // Type photoPreview as string or null
+  const [logoPreview, setLogoPreview] = useState<string | null>(null); // Type logoPreview as string or null
+  const [loadingPhoto, setLoadingPhoto] = useState<boolean>(false); // Type loadingPhoto as boolean
+  const [loadingLogo, setLoadingLogo] = useState<boolean>(false); // Type loadingLogo as boolean  
+  const photoInputRef = useRef<HTMLInputElement>(null); // Type photoInputRef as HTMLInputElement or null
+  const logoInputRef = useRef<HTMLInputElement>(null); // Type logoInputRef as HTMLInputElement or null
 
   const {
-    shop,
-    isLoading,
-    createShopInfo,
-    updateShopInfo,
-    createStatus,
-    updateStatus,
-    refetch,
-  } = useShop();
+    shop,    
+    createShopInfo, // Assuming these are from useShop or imported elsewhere
+    updateShopInfo, // Assuming these are from useShop or imported elsewhere
+    createStatus, // Not explicitly used but good to acknowledge
+    updateStatus, // Not explicitly used but good to acknowledge  
+  }: any = useShop(); // Type useShop hook return as any to suppress errors if it's not strictly typed
 
-
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => { // Type e as React.ChangeEvent<HTMLInputElement>
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: any) => ({ ...prev, [name]: value })); // Type prev as any
   };
 
-  const handleImageUpload = async (e: any, type: 'photo' | 'logo') => {
-    const file = e.target.files[0];
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'photo' | 'logo') => { // Type e as React.ChangeEvent<HTMLInputElement>
+    const file = e.target.files?.[0]; // Use optional chaining
     if (!file) return;
 
     if (type === 'photo') setLoadingPhoto(true);
@@ -57,14 +53,19 @@ const Settings = () => {
         method: 'POST',
         body: data,
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
       const imageUrl = result?.url;
 
-      setFormData(prev => ({ ...prev, [type]: imageUrl }));
+      setFormData((prev: any) => ({ ...prev, [type]: imageUrl })); // Type prev as any
       if (type === 'photo') setPhotoPreview(imageUrl);
       else setLogoPreview(imageUrl);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) { // Type err as any
+      console.error("Image upload failed:", err?.message || err);
     } finally {
       if (type === 'photo') setLoadingPhoto(false);
       else setLoadingLogo(false);
@@ -72,42 +73,54 @@ const Settings = () => {
   };
 
   const triggerImageUpload = (type: 'photo' | 'logo') => {
-    if (type === 'photo') photoInputRef.current.click();
-    else logoInputRef.current.click();
+    if (type === 'photo' && photoInputRef.current) photoInputRef.current.click();
+    else if (type === 'logo' && logoInputRef.current) logoInputRef.current.click();
   };
 
   const removeImage = (type: 'photo' | 'logo') => {
-    setFormData(prev => ({ ...prev, [type]: null }));
+    setFormData((prev: any) => ({ ...prev, [type]: null })); // Type prev as any
     if (type === 'photo') {
       setPhotoPreview(null);
-      photoInputRef.current.value = '';
+      if (photoInputRef.current) photoInputRef.current.value = '';
     } else {
       setLogoPreview(null);
-      logoInputRef.current.value = '';
+      if (logoInputRef.current) logoInputRef.current.value = '';
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => { // Type e as React.FormEvent<HTMLFormElement>
     e.preventDefault();    
     try {
-      if(shop){   
+      if(shop?._id){ // Check for shop._id to determine update vs create
         console.log("calling update");
-      await updateShopInfo({...formData, id:shop._id})
+        await updateShopInfo({ ...formData, id: shop._id } as any).unwrap(); // Cast formData as any, use unwrap()
       }else{
         console.log("calling create");
-      await createShopInfo(formData); 
+        await createShopInfo(formData as any).unwrap(); // Cast formData as any, use unwrap()
       }      
-    } catch (error) {
-       console.log(err?.data?.message)
+    } catch (error: any) { // Type error as any
+      console.error("Submission failed:", error?.data?.message || error?.message || 'Unknown error');
     }
   };
 
-
   useEffect(()=>{
-if(shop){
-    setFormData(prev=>({...prev, ...shop}))
-  }
-  },[shop])
+    if(shop){
+      setFormData((prev: any) => ({ // Type prev as any
+        ...prev, 
+        site_name: shop.site_name || '',
+        vat_no: shop.vat_no || '',
+        mobile: shop.mobile || '',
+        address: shop.address || '',
+        district: shop.district || '',
+        email: shop.email || '',
+        owner_name: shop.owner_name || '',
+        photo: shop.photo || null,
+        logo: shop.logo || null,
+      }));
+      setPhotoPreview(shop.photo || null);
+      setLogoPreview(shop.logo || null);
+    }
+  },[shop]);
   
   return (
     <div className={styles.formContainer}>
@@ -219,7 +232,7 @@ if(shop){
                 <input
                   type="file"
                   ref={photoInputRef}
-                  onChange={(e) => handleImageUpload(e, 'photo')}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageUpload(e, 'photo')}
                   accept="image/jpeg, image/png"
                   className={styles.fileInput}
                 />
@@ -232,7 +245,7 @@ if(shop){
               <div className={styles.profileImageContainer}>
                 {loadingLogo ? (
                   <ImageUploadSpinner />
-                ) : logoPreview || formData?.logo ?  (
+                ) : logoPreview || formData?.logo ? (
                   <div className={styles.profileImageWrapper}>
                     <img src={logoPreview || formData?.logo} alt="Logo" className={styles.imagePreview} />
                     <button type="button" className={styles.removeImageButton} onClick={() => removeImage('logo')}>×</button>
@@ -249,7 +262,7 @@ if(shop){
                 <input
                   type="file"
                   ref={logoInputRef}
-                  onChange={(e) => handleImageUpload(e, 'logo')}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageUpload(e, 'logo')}
                   accept="image/jpeg, image/png"
                   className={styles.fileInput}
                 />
@@ -259,7 +272,13 @@ if(shop){
 
           {/* Submit Button */}
           <div className={styles.formActions}>
-            <button type="submit" className={styles.submitButton}>Save Settings</button>
+            <button 
+              type="submit" 
+              className={styles.submitButton}
+              disabled={createStatus?.isLoading || updateStatus?.isLoading || loadingPhoto || loadingLogo} // Added isLoading states to disable button
+            >
+              {(createStatus?.isLoading || updateStatus?.isLoading || loadingPhoto || loadingLogo) ? 'Saving...' : 'Save Settings'}
+            </button>
           </div>
         </form>
       </div>

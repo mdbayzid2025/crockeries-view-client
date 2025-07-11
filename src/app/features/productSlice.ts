@@ -12,11 +12,19 @@ export const productApiSlice = apiSlice.enhanceEndpoints({addTagTypes: ['Product
     getSingleProduct: builder.query({
       query: (id)=> `products/${id}`
     }),
+    // updateProduct: builder.mutation({
+    //   query: ({id, ...rest})=>({
+    //     url: `products/${id}`,
+    //     method: "PUT",
+    //     body: rest,
+    //   }),
+    //   invalidatesTags: ['Products'],
+    // }),
     updateProduct: builder.mutation({
-      query: ({id, ...rest})=>({
-        url: `products/${id}`,
+      query: (formData)=>({
+        url: `products/update`,
         method: "PUT",
-        body: rest,
+        body: formData,
       }),
       invalidatesTags: ['Products'],
     }),

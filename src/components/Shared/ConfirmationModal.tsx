@@ -4,7 +4,7 @@ import styles from './ConfirmationModal.module.css';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
-  title: string;
+  title: any;
   message: string;
   onConfirm: () => void;
   onCancel: () => void;

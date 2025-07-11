@@ -10,7 +10,7 @@ export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']})
     }),
     getCustomerById: builder.query({
       query: (id) => `customers/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Customer', id }],
+      providesTags: ( id) => [{ type: 'Customer', id }],
     }),
     addCustomer: builder.mutation({
       query: (customerData) => ({
@@ -21,8 +21,8 @@ export const customerApi =apiSlice.enhanceEndpoints({addTagTypes: ['Customer']})
       invalidatesTags: ['Customer'],
     }),
     updateCustomer: builder.mutation({
-      query: ({ id, ...customerData }) => ({
-        url: `customers/${id}`,
+      query: (customerData) => ({
+        url: `customers/update`,
         method: 'PUT',
         body: customerData,
       }),

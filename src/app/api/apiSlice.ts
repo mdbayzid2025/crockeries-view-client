@@ -34,5 +34,5 @@ console.log("refreshResult", refreshResult)
 
     return result;
   },
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
 });

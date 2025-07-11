@@ -21,11 +21,7 @@ const customerSlice = createSlice({
     setAllCustomers: (state, action) => {
       state.allCustomers = action.payload;
     },
- // Action to update a single customer in cache
- cacheCustomer: (state, action) => {
-  const customer = action.payload;
-  state.customerCache[customer?.id] = customer;
-},
+
 // Clear cache if needed
 clearCustomerCache: (state) => {
   state.customerCache = {};
@@ -33,7 +29,7 @@ clearCustomerCache: (state) => {
   },
 });
 
-export const { setAllCustomers, setSelectedCustomer, clearCustomerCache, cacheCustomer } = customerSlice.actions;
+export const { setAllCustomers, setSelectedCustomer, clearCustomerCache } = customerSlice.actions;
 
 
 // Selectors

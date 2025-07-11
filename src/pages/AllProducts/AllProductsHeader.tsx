@@ -1,8 +1,8 @@
-import React from 'react'
+
 import styles from './AllProductsHeader.module.css'
 
 
-const AllProductsHeader = ({selected, setSelectTab}) => {
+const AllProductsHeader = ({selected, setSelectTab} : any) => {
     const tabs = [
         'All Products',
         'Add Product',        

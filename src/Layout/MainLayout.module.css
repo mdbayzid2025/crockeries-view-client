@@ -1,5 +1,6 @@
 .content{
     margin-left: 250px;    
+    padding: 20px;
 }
 
 .MobileHeader{
@@ -8,6 +9,7 @@
 @media (max-width: 768px){
     .content{
         margin-left: 0;    
+        padding: 10px;
     }
     .MobileHeader{
         display: block;
